@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../l10n/strings.dart';
+import '../services/metrics_service.dart';
 import '../services/session_state.dart';
 import '../theme/app_theme.dart';
 import '../widgets/keypad.dart';
@@ -56,6 +57,7 @@ class _PrivacyLockScreenState extends State<PrivacyLockScreen>
 
     // Check if there's an active lockout; if so start the countdown.
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      MetricsService.instance.record('lock_shown');
       _checkPinSetAndLockout();
     });
   }
@@ -89,6 +91,8 @@ class _PrivacyLockScreenState extends State<PrivacyLockScreen>
     if (session.isLockedOut || _shaking) return;
     if (_entered.length >= 4) return;
 
+    MetricsService.instance.record('pin_key', {'key': digit});
+
     setState(() {
       _entered += digit;
       _error = null;
@@ -115,11 +119,13 @@ class _PrivacyLockScreenState extends State<PrivacyLockScreen>
     if (!mounted) return;
 
     if (ok) {
+      MetricsService.instance.record('unlocked');
       // Correct: replace with MainScreen (no back to lock).
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const MainScreen()),
       );
     } else {
+      MetricsService.instance.record('pin_error');
       // Wrong: shake, clear, show error.
       final reduceMotion = MediaQuery.disableAnimationsOf(context);
       if (!reduceMotion) {

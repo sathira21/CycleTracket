@@ -58,5 +58,14 @@ Legend: `[ ]` todo, `[/]` in progress, `[x]` done.
 - [x] Accessibility audit: Semantics on all controls, 1.5x large text scaling tested without overflow, reduced motion verified
 - [x] Full automated test suite in `accessibility_and_offline_test.dart`
 
-## Phase 8: Test instrumentation  (next)
-- [ ] Test instrumentation (`TEST_MODE` metrics overlay and export)
+## Phase 8: Test instrumentation  (done)
+- [x] `--dart-define=TEST_MODE=true` local `MetricsService` (records `lock_shown`, `pin_key`, `pin_error`, `unlocked`, `nav`, `article_open`, `save_offline`, `toast_shown`, `hide_tap`, `hide_done`)
+- [x] In-memory local computation of metrics: time-on-task, tap count, post-unlock tap count, wrong PIN attempts, HIDE latency (<2s), task success
+- [x] `TestModeOverlay` with draggable status pill, live tap counter, bottom sheet metrics dashboard, session reset, and JSON export to clipboard
+- [x] Complete Think-Aloud user testing script and observation sheet in `docs/user-testing.md`
+- [x] Zero PII, zero external network requests
+- [x] Automated unit and widget tests in `test/services/metrics_service_test.dart` and `test/widgets/test_mode_overlay_test.dart`
+
+## Phase 10: Hand-off  (next)
+- [ ] `docs/integration.md`: screens/routes, Hive boxes and type ids, `PinService` and `ContentRepository` contracts, integration points for Members 1, 2, and 4, and stable article IDs for deep-linking
+

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../services/metrics_service.dart';
 import '../theme/app_theme.dart';
 
 /// Dark bottom pill toast with a green check. Only one toast is shown at a
@@ -19,6 +20,7 @@ class AppToast {
     Duration duration = const Duration(seconds: 4),
     double bottomOffset = 24,
   }) {
+    MetricsService.instance.record('toast_shown', {'message': message});
     dismiss();
     final overlay = Overlay.of(context, rootOverlay: true);
     final entry = OverlayEntry(
