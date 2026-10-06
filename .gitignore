@@ -51,3 +51,8 @@ app.*.map.json
 **/flutter/generated_plugin_registrant.*
 **/flutter/generated_plugins.cmake
 macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Local docs and design reference
+CLAUDE.md
+member3.md
+HiFi.png
