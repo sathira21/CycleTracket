@@ -21,9 +21,9 @@ class TopicTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final background = highlighted ? AppTheme.maroon : AppTheme.surface;
+    final background = highlighted ? AppTheme.primaryColor : AppTheme.surface;
     final titleColor = highlighted ? Colors.white : AppTheme.textDark;
-    final subtitleColor = highlighted ? Colors.white70 : AppTheme.textLight;
+    final subtitleColor = highlighted ? Colors.white.withValues(alpha: 0.9) : AppTheme.textLight;
 
     return Semantics(
       button: true,
@@ -31,8 +31,8 @@ class TopicTile extends StatelessWidget {
       excludeSemantics: true,
       child: Material(
         color: background,
-        elevation: 1,
-        shadowColor: AppTheme.primaryColor.withValues(alpha: 0.3),
+        elevation: highlighted ? 3 : 1,
+        shadowColor: AppTheme.primaryColor.withValues(alpha: highlighted ? 0.35 : 0.15),
         borderRadius: BorderRadius.circular(24),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

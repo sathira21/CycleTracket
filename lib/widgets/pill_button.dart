@@ -38,7 +38,7 @@ class PillButton extends StatelessWidget {
         foreground = AppTheme.primaryColor;
         side = const BorderSide(color: AppTheme.primaryColor, width: 1.5);
       case PillButtonStyle.dark:
-        background = AppTheme.maroon;
+        background = AppTheme.textDark;
         foreground = Colors.white;
         side = BorderSide.none;
     }

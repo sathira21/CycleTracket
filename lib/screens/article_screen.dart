@@ -196,7 +196,7 @@ class ArticleScreen extends StatelessWidget {
                                   child: Center(
                                     child: Icon(
                                       Icons.chevron_left,
-                                      color: Color(0xFF2D142C),
+                                      color: AppTheme.textDark,
                                       size: 26,
                                     ),
                                   ),
@@ -293,7 +293,7 @@ class ArticleScreen extends StatelessWidget {
 
                             // S4: Wide primary pill "Save To Offline Library"
                             return Material(
-                              color: AppTheme.maroon,
+                              color: AppTheme.primaryColor,
                               shape: const StadiumBorder(),
                               elevation: 2,
                               clipBehavior: Clip.antiAlias,
@@ -341,7 +341,7 @@ class ArticleScreen extends StatelessWidget {
           child: Text(
             text.of(lang),
             style: const TextStyle(
-              color: Color(0xFF2D142C),
+              color: AppTheme.textDark,
               fontSize: 18,
               fontWeight: FontWeight.w800,
               height: 1.35,
@@ -518,7 +518,7 @@ class _ArticleTitle extends StatelessWidget {
       return Text(
         title,
         style: const TextStyle(
-          color: Color(0xFF2D142C),
+          color: AppTheme.textDark,
           fontSize: 24,
           fontWeight: FontWeight.w800,
           height: 1.3,
@@ -536,11 +536,11 @@ class _ArticleTitle extends StatelessWidget {
         children: [
           TextSpan(
             text: parts.$1,
-            style: const TextStyle(color: Color(0xFF2D142C)),
+            style: const TextStyle(color: AppTheme.textDark),
           ),
           TextSpan(
             text: parts.$2,
-            style: const TextStyle(color: Color(0xFFE83A6D)),
+            style: const TextStyle(color: AppTheme.primaryColor),
           ),
         ],
       ),

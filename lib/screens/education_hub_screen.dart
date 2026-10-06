@@ -351,22 +351,40 @@ class _DailyTipCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppTheme.maroon,
+        gradient: const LinearGradient(
+          colors: [AppTheme.primaryColor, Color(0xFFF493AC)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryColor.withValues(alpha: 0.25),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.local_cafe, color: Colors.white70, size: 20),
-              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.lightbulb_outline, color: Colors.white, size: 18),
+              ),
+              const SizedBox(width: 10),
               Text(
                 t('daily_tip', lang: lang),
                 style: const TextStyle(
-                  color: Colors.white70,
+                  color: Colors.white,
                   fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -384,11 +402,31 @@ class _DailyTipCard extends StatelessWidget {
           ),
           if (onReadMore != null) ...[
             const SizedBox(height: 16),
-            PillButton(
-              label: t('read_more', lang: lang),
-              onPressed: onReadMore,
-              expanded: false,
-              style: PillButtonStyle.outline,
+            Material(
+              color: Colors.white,
+              shape: const StadiumBorder(),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: onReadMore,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        t('read_more', lang: lang),
+                        style: const TextStyle(
+                          color: AppTheme.primaryColor,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.arrow_forward, color: AppTheme.primaryColor, size: 16),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         ],

@@ -214,7 +214,7 @@ class OfflineLibraryScreen extends StatelessWidget {
                               Text(
                                 article.title.of(lang),
                                 style: const TextStyle(
-                                  color: Color(0xFF2D142C),
+                                  color: AppTheme.textDark,
                                   fontSize: 15.5,
                                   fontWeight: FontWeight.w700,
                                   height: 1.3,
@@ -251,7 +251,7 @@ class OfflineLibraryScreen extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Material(
-                        color: AppTheme.maroon,
+                        color: AppTheme.primaryColor,
                         shape: const StadiumBorder(),
                         clipBehavior: Clip.antiAlias,
                         child: InkWell(
@@ -322,7 +322,7 @@ class OfflineLibraryScreen extends StatelessWidget {
             Text(
               t('library_empty_title', lang: lang),
               style: const TextStyle(
-                color: Color(0xFF2D142C),
+                color: AppTheme.textDark,
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
               ),
