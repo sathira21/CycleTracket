@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../content/content_repository.dart';
 import '../l10n/strings.dart';
+import '../routes.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_chip.dart';
 import '../widgets/app_top_bar.dart';
 import '../widgets/article_row.dart';
 import '../widgets/lang_builder.dart';
+import 'article_screen.dart';
 
 /// S3 – Category list screen (e.g. "Food & Nutrition", "Our Body").
 ///
@@ -54,7 +56,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   itemCount: category.filters.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  separatorBuilder: (_, _) => const SizedBox(width: 8),
                   itemBuilder: (context, i) {
                     final filter = category.filters[i];
                     return Center(
@@ -84,7 +86,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                         itemCount: articles.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: 10),
                         itemBuilder: (context, i) {
                           final article = articles[i];
@@ -108,14 +110,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _openArticle(String articleId) {
-    // TODO(phase4): replace with ArticleScreen.
-    // For now, show a placeholder snackbar.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Article: $articleId (built in Phase 4)'),
-        duration: const Duration(seconds: 1),
-      ),
-    );
+    AppRoutes.push(context, ArticleScreen(articleId: articleId));
   }
 
   static IconData _iconForHero(String hero) {
