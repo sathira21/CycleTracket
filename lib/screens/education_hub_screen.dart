@@ -1,0 +1,402 @@
+import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import '../content/content_repository.dart';
+import '../content/content_types.dart';
+import '../l10n/lang.dart';
+import '../l10n/strings.dart';
+import '../models/saved_article.dart';
+import '../routes.dart';
+import '../services/saved_articles_store.dart';
+import '../theme/app_theme.dart';
+import '../widgets/article_row.dart';
+import '../widgets/lang_builder.dart';
+import '../widgets/pill_button.dart';
+import '../widgets/topic_tile.dart';
+import 'category_screen.dart';
+import 'myth_buster_screen.dart';
+import 'offline_library_screen.dart';
+
+/// S2 – Education Hub (the **Learn** tab).
+///
+/// This is NOT the existing [DashboardScreen] (Member 2's cycle dashboard).
+/// It is a new screen for the Private Education subsystem.
+class EducationHubScreen extends StatefulWidget {
+  const EducationHubScreen({super.key});
+
+  @override
+  State<EducationHubScreen> createState() => _EducationHubScreenState();
+}
+
+class _EducationHubScreenState extends State<EducationHubScreen> {
+  static const _repo = BundledRepository();
+
+  final TextEditingController _searchCtrl = TextEditingController();
+  List<Article>? _searchResults;
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  void _onSearch(String query, Lang lang) {
+    if (query.trim().isEmpty) {
+      setState(() => _searchResults = null);
+      return;
+    }
+    setState(() => _searchResults = _repo.search(query, lang));
+  }
+
+  void _clearSearch() {
+    _searchCtrl.clear();
+    setState(() => _searchResults = null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LangBuilder(
+      builder: (context, lang) {
+        final tip = _repo.tipForDate(DateTime.now());
+        final isSearching = _searchResults != null;
+
+        return Scaffold(
+          backgroundColor: AppTheme.backgroundColor,
+          body: SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                // ─── Header ─────────────────────────────────────
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    child: Row(
+                      children: [
+                        // Flower / logo tile.
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: AppTheme.cardColor,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Icon(
+                            Icons.local_florist,
+                            color: AppTheme.primaryColor,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Semantics(
+                            header: true,
+                            child: Text(
+                              t('greeting', lang: lang),
+                              style: const TextStyle(
+                                color: AppTheme.textDark,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // ─── Search field ───────────────────────────────
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
+                    child: TextField(
+                      controller: _searchCtrl,
+                      onChanged: (q) => _onSearch(q, lang),
+                      style: const TextStyle(
+                        color: AppTheme.textDark,
+                        fontSize: 15,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: t('search_hint', lang: lang),
+                        hintStyle: const TextStyle(
+                          color: AppTheme.textLight,
+                          fontSize: 15,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: AppTheme.textLight,
+                        ),
+                        suffixIcon: isSearching
+                            ? IconButton(
+                                icon: const Icon(Icons.close,
+                                    color: AppTheme.textLight),
+                                onPressed: _clearSearch,
+                                tooltip: t('back', lang: lang),
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: AppTheme.surface,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // ─── Search results OR main content ─────────────
+                if (isSearching) ...[
+                  _searchResults!.isEmpty
+                      ? SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.search_off,
+                                    size: 48, color: AppTheme.textLight),
+                                const SizedBox(height: 12),
+                                Text(
+                                  t('search_no_results', lang: lang),
+                                  style: const TextStyle(
+                                    color: AppTheme.textLight,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                          sliver: SliverList.separated(
+                            itemCount: _searchResults!.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 10),
+                            itemBuilder: (context, i) {
+                              final article = _searchResults![i];
+                              return ArticleRow(
+                                title: article.title.of(lang),
+                                summary: article.summary.of(lang),
+                                meta: t('min_read', lang: lang, params: {
+                                  'n': '${article.readMinutes}',
+                                }),
+                                icon: _iconForHero(article.hero),
+                                onTap: () => _openArticle(article.id),
+                              );
+                            },
+                          ),
+                        ),
+                ] else ...[
+                  // ─── Daily Health Tip ───────────────────────────
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                      child: _DailyTipCard(
+                        tip: tip,
+                        lang: lang,
+                        onReadMore: tip.articleId != null
+                            ? () => _openArticle(tip.articleId!)
+                            : null,
+                      ),
+                    ),
+                  ),
+
+                  // ─── Explore Topics heading ─────────────────────
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+                      child: Text(
+                        t('explore_topics', lang: lang),
+                        style: const TextStyle(
+                          color: AppTheme.textDark,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // ─── 2x2 Topic grid ─────────────────────────────
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ValueListenableBuilder<Box<SavedArticle>>(
+                        valueListenable: SavedArticlesStore.listenable,
+                        builder: (context, box, _) {
+                          final savedCount = box.length;
+                          return Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TopicTile(
+                                      title: t('topic_our_body', lang: lang),
+                                      subtitle: t('topic_our_body_sub',
+                                          lang: lang),
+                                      icon: Icons.favorite_outline,
+                                      onTap: () => _openCategory('our-body'),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: TopicTile(
+                                      title: t('topic_food', lang: lang),
+                                      subtitle:
+                                          t('topic_food_sub', lang: lang),
+                                      icon: Icons.restaurant,
+                                      onTap: () => _openCategory('food-diet'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TopicTile(
+                                      title: t('topic_myth', lang: lang),
+                                      subtitle:
+                                          t('topic_myth_sub', lang: lang),
+                                      icon: Icons.psychology,
+                                      highlighted: true,
+                                      onTap: () => AppRoutes.push(
+                                        context,
+                                        const MythBusterScreen(),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: TopicTile(
+                                      title: t('topic_library', lang: lang),
+                                      subtitle: t('guides_offline',
+                                          lang: lang,
+                                          params: {'n': '$savedCount'}),
+                                      icon: Icons.bookmark_outline,
+                                      onTap: () => AppRoutes.push(
+                                        context,
+                                        const OfflineLibraryScreen(),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+
+                  // Bottom padding.
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 32),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ── Navigation helpers ──────────────────────────────────────────
+
+  void _openCategory(String categoryId) {
+    AppRoutes.push(context, CategoryScreen(categoryId: categoryId));
+  }
+
+  void _openArticle(String articleId) {
+    // ArticleScreen will be built in Phase 4. For now, navigate to category.
+    // TODO(phase4): replace with AppRoutes.push(context, ArticleScreen(articleId: articleId));
+    final article = _repo.articleById(articleId);
+    if (article != null) {
+      AppRoutes.push(context, CategoryScreen(categoryId: article.categoryId));
+    }
+  }
+
+  static IconData _iconForHero(String hero) {
+    return switch (hero) {
+      'plate' => Icons.restaurant,
+      'water' => Icons.water_drop,
+      'cycle' => Icons.autorenew,
+      'drop' => Icons.water_drop_outlined,
+      'hygiene' => Icons.clean_hands,
+      'school' => Icons.school,
+      _ => Icons.article,
+    };
+  }
+}
+
+// ── Daily Health Tip card ───────────────────────────────────────────
+
+class _DailyTipCard extends StatelessWidget {
+  const _DailyTipCard({
+    required this.tip,
+    required this.lang,
+    this.onReadMore,
+  });
+
+  final DailyTip tip;
+  final Lang lang;
+  final VoidCallback? onReadMore;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppTheme.maroon,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.local_cafe, color: Colors.white70, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                t('daily_tip', lang: lang),
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            tip.text.of(lang),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              height: 1.6,
+            ),
+          ),
+          if (onReadMore != null) ...[
+            const SizedBox(height: 16),
+            PillButton(
+              label: t('read_more', lang: lang),
+              onPressed: onReadMore,
+              expanded: false,
+              style: PillButtonStyle.outline,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
