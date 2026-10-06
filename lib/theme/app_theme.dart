@@ -8,6 +8,17 @@ class AppTheme {
   static const Color textDark = Color(0xFF4C1D95); // Deep maroon/purple text
   static const Color textLight = Color(0xFF9CA3AF);
 
+  // Added for the Private Education subsystem (Member 3).
+  static const Color primaryDark = Color(0xFFB01848); // Pressed state, title accents
+  static const Color maroon = Color(0xFF4A0F2B); // Dark cards, HIDE button, quiz background
+  static const Color success = Color(0xFF2E9E6B); // "Saved Offline", offline banner
+  static const Color surface = Colors.white; // Cards and sheets
+
+  /// Outfit has no Sinhala glyphs, so Sinhala text falls back to the bundled
+  /// Noto Sans Sinhala (see assets/google_fonts).
+  static List<String> get sinhalaFallback =>
+      [GoogleFonts.notoSansSinhala().fontFamily!];
+
   static ThemeData get lightTheme {
     return ThemeData(
       primaryColor: primaryColor,
@@ -25,7 +36,7 @@ class AppTheme {
             color: textDark, fontSize: 24, fontWeight: FontWeight.w600),
         bodyLarge: GoogleFonts.outfit(color: textDark, fontSize: 16),
         bodyMedium: GoogleFonts.outfit(color: textDark, fontSize: 14),
-      ),
+      ).apply(fontFamilyFallback: sinhalaFallback),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
