@@ -63,6 +63,49 @@ class DashboardScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: 24),
+                
+                // Daily Insights / Tips Card
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF1F2), // Very light pink/red background
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppTheme.primaryColor.withOpacity(0.2), width: 1.5),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryColor.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            )
+                          ]
+                        ),
+                        child: const Icon(Icons.lightbulb_outline, color: AppTheme.primaryColor, size: 28),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Daily Insight', style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, fontSize: 14)),
+                            const SizedBox(height: 4),
+                            const Text('Stay hydrated! Drinking water helps reduce bloating during this phase of your cycle.', 
+                              style: TextStyle(color: AppTheme.textDark, fontSize: 14, height: 1.4),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 32),
 
                 // 2. Monthly Summaries / Graphs
