@@ -66,6 +66,6 @@ Legend: `[ ]` todo, `[/]` in progress, `[x]` done.
 - [x] Zero PII, zero external network requests
 - [x] Automated unit and widget tests in `test/services/metrics_service_test.dart` and `test/widgets/test_mode_overlay_test.dart`
 
-## Phase 10: Hand-off  (next)
-- [ ] `docs/integration.md`: screens/routes, Hive boxes and type ids, `PinService` and `ContentRepository` contracts, integration points for Members 1, 2, and 4, and stable article IDs for deep-linking
+## Phase 10: Hand-off  (done)
+- [x] `docs/integration.md`: screens/routes, Hive boxes and type ids, `PinService` and `ContentRepository` contracts, integration points for Members 1, 2, and 4, and stable article IDs for deep-linking
 
