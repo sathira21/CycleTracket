@@ -87,6 +87,19 @@ class _WidgetKitScreenState extends State<WidgetKitScreen> {
               expanded: false,
             ),
 
+            _section('HideButton (Panic Button)'),
+            Row(
+              children: [
+                HideButton(onHide: () {}),
+                const SizedBox(width: 12),
+                HideButton(
+                  onHide: () {},
+                  backgroundColor: AppTheme.maroon,
+                  foregroundColor: Colors.white,
+                ),
+              ],
+            ),
+
             _section('AppChip'),
             Wrap(
               spacing: 8,

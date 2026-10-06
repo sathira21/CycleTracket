@@ -9,6 +9,7 @@ import 'pin_service.dart';
 /// Lockout (fail count + lockedUntil) is persisted in the Hive `settings`
 /// box so a restart does not reset a lockout.
 class SessionState extends ChangeNotifier {
+  // ignore: prefer_initializing_formals
   SessionState({required PinService pinService}) : _pinService = pinService {
     _loadLockout();
   }

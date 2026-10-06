@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../l10n/strings.dart';
-import '../theme/app_theme.dart';
 
 /// The panic button (REQ-3.1). Solid, high-contrast and visually heavy: user
 /// testing showed people hesitated when it blended into the header, so it must
@@ -8,10 +7,18 @@ import '../theme/app_theme.dart';
 ///
 /// Kept as its own widget so it can be moved or turned into a FAB later.
 class HideButton extends StatelessWidget {
-  const HideButton({super.key, required this.onHide, this.label});
+  const HideButton({
+    super.key,
+    required this.onHide,
+    this.label,
+    this.backgroundColor = Colors.white,
+    this.foregroundColor = const Color(0xFFB01848),
+  });
 
   final VoidCallback onHide;
   final String? label;
+  final Color backgroundColor;
+  final Color foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -21,32 +28,44 @@ class HideButton extends StatelessWidget {
       label: text,
       excludeSemantics: true,
       child: Material(
-        color: AppTheme.maroon,
-        elevation: 4,
-        shape: const StadiumBorder(
-          side: BorderSide(color: Colors.white, width: 2),
+        color: backgroundColor,
+        elevation: 3,
+        shape: StadiumBorder(
+          side: BorderSide(
+            color: foregroundColor.withValues(alpha: 0.2),
+            width: 1.5,
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onHide,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+            constraints: const BoxConstraints(minHeight: 40, minWidth: 44),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    text,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
+                  Container(
+                    width: 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      color: foregroundColor,
+                      shape: BoxShape.circle,
                     ),
                   ),
                   const SizedBox(width: 6),
-                  const Icon(Icons.close, color: Colors.white, size: 18),
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: foregroundColor,
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(Icons.close, color: foregroundColor, size: 16),
                 ],
               ),
             ),

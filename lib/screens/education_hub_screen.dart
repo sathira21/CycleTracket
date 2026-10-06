@@ -13,6 +13,7 @@ import '../widgets/article_row.dart';
 import '../widgets/lang_builder.dart';
 import '../widgets/pill_button.dart';
 import '../widgets/topic_tile.dart';
+import 'article_screen.dart';
 import 'category_screen.dart';
 import 'myth_buster_screen.dart';
 import 'offline_library_screen.dart';
@@ -176,7 +177,7 @@ class _EducationHubScreenState extends State<EducationHubScreen> {
                           padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                           sliver: SliverList.separated(
                             itemCount: _searchResults!.length,
-                            separatorBuilder: (_, __) =>
+                            separatorBuilder: (_, _) =>
                                 const SizedBox(height: 10),
                             itemBuilder: (context, i) {
                               final article = _searchResults![i];
@@ -315,12 +316,7 @@ class _EducationHubScreenState extends State<EducationHubScreen> {
   }
 
   void _openArticle(String articleId) {
-    // ArticleScreen will be built in Phase 4. For now, navigate to category.
-    // TODO(phase4): replace with AppRoutes.push(context, ArticleScreen(articleId: articleId));
-    final article = _repo.articleById(articleId);
-    if (article != null) {
-      AppRoutes.push(context, CategoryScreen(categoryId: article.categoryId));
-    }
+    AppRoutes.push(context, ArticleScreen(articleId: articleId));
   }
 
   static IconData _iconForHero(String hero) {

@@ -41,7 +41,19 @@ class AppToast {
     _timer = null;
     final entry = _entry;
     _entry = null;
-    if (entry != null && entry.mounted) entry.remove();
+    if (entry != null) {
+      try {
+        if (entry.mounted) entry.remove();
+      } catch (_) {}
+    }
+  }
+
+  /// For test isolation: resets active entry and timer without touching overlays.
+  @visibleForTesting
+  static void reset() {
+    _timer?.cancel();
+    _timer = null;
+    _entry = null;
   }
 }
 
