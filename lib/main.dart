@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'services/local_storage_service.dart';
 import 'theme/app_theme.dart';
-import 'screens/calendar_screen.dart';
+import 'screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +17,7 @@ class CycleCareApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cycle Care',
       theme: AppTheme.lightTheme,
-      home: const CalendarScreen(),
+      home: const MainScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
