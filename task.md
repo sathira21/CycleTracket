@@ -51,5 +51,12 @@ Legend: `[ ]` todo, `[/]` in progress, `[x]` done.
 - [x] Top bar panic `HideButton` (REQ-3.1)
 - [x] Full test coverage (`myth_buster_screen_test.dart` and `quiz_flow_test.dart`)
 
-## Phase 7: Offline hardening, i18n, accessibility  (next)
-- [ ] Offline hardening, Sinhala parity review, accessibility audit
+## Phase 7: Offline hardening, i18n, accessibility  (done)
+- [x] Verified zero external network calls; fonts bundled in `assets/google_fonts/`, runtime fetching disabled
+- [x] Verified 100% offline data flow via `BundledRepository` and Hive
+- [x] Sinhala i18n parity verified across all screens with dynamic language switching
+- [x] Accessibility audit: Semantics on all controls, 1.5x large text scaling tested without overflow, reduced motion verified
+- [x] Full automated test suite in `accessibility_and_offline_test.dart`
+
+## Phase 8: Test instrumentation  (next)
+- [ ] Test instrumentation (`TEST_MODE` metrics overlay and export)
