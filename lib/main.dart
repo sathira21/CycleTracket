@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'services/local_storage_service.dart';
 import 'theme/app_theme.dart';
 import 'screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Offline-first: fonts are bundled in assets/google_fonts, never fetched at runtime.
+  GoogleFonts.config.allowRuntimeFetching = false;
   await LocalStorageService.init();
   runApp(const CycleCareApp());
 }
