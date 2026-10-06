@@ -32,10 +32,16 @@ Legend: `[ ]` todo, `[/]` in progress, `[x]` done.
 - [x] Panic `HideButton` clears navigation stack to `MainScreen` and locks session
 - [x] Phase 4 acceptance flow test (Hub -> Category -> Article -> Save in 3 taps <= 4 taps)
 
-## Phase 5: Offline Library  (next)
-- [ ] `OfflineLibraryScreen`
+## Phase 5: Offline Library  (done)
+- [x] `OfflineLibraryScreen` (S6) with "Zero Internet Required" banner
+- [x] Reactive list of saved articles (sorted newest first)
+- [x] "Read Offline" pill and card tapping to open `ArticleScreen`
+- [x] In-library unsave with reversible feedback
+- [x] Empty state with friendly illustration and "Browse topics" button
+- [x] Top bar panic `HideButton` (REQ-3.1)
+- [x] Full test coverage (`offline_library_screen_test.dart` and `library_flow_test.dart`)
 
-## Phase 6: Myth Buster
+## Phase 6: Myth Buster  (next)
 - [ ] `MythBusterScreen` and quiz logic
 
 ## Phase 7: Offline hardening, i18n, accessibility
