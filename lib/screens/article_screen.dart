@@ -8,6 +8,7 @@ import '../l10n/lang.dart';
 import '../l10n/strings.dart';
 import '../models/saved_article.dart';
 import '../routes.dart';
+import '../services/metrics_service.dart';
 import '../services/saved_articles_store.dart';
 import '../services/session_state.dart';
 import '../theme/app_theme.dart';
@@ -44,6 +45,7 @@ class ArticleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MetricsService.instance.record('article_open', {'articleId': articleId});
     return PopScope(
       canPop: true,
       child: LangBuilder(
@@ -460,6 +462,7 @@ class ArticleScreen extends StatelessWidget {
     String id,
     Lang lang,
   ) async {
+    MetricsService.instance.record('save_offline', {'articleId': id});
     AppToast.show(
       context,
       message: t('toast_saved_title', lang: lang),
@@ -483,6 +486,8 @@ class ArticleScreen extends StatelessWidget {
   }
 
   void _handleHide(BuildContext context) {
+    MetricsService.instance.record('hide_tap');
+
     // 1. Dismiss active toast immediately
     AppToast.dismiss();
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -494,6 +499,8 @@ class ArticleScreen extends StatelessWidget {
 
     // 3. Reset navigator stack to MainScreen instantly with no animation
     AppRoutes.resetTo(context, const MainScreen());
+
+    MetricsService.instance.record('hide_done');
   }
 }
 

@@ -10,6 +10,7 @@ import 'services/pin_service.dart';
 import 'services/saved_articles_store.dart';
 import 'services/session_state.dart';
 import 'theme/app_theme.dart';
+import 'widgets/test_mode_overlay.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +44,8 @@ class CycleCareApp extends StatelessWidget {
         // Every cold start shows the lock screen (Phase 2).
         home: const PrivacyLockScreen(),
         debugShowCheckedModeBanner: false,
+        builder: (context, child) =>
+            TestModeOverlay(child: child ?? const SizedBox()),
         routes: {
           // Debug-only widget kit screen (Phase 1 accept criteria).
           if (kDebugMode) '/kit': (_) => const WidgetKitScreen(),
