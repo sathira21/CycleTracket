@@ -233,7 +233,7 @@ class _TestModeOverlayState extends State<TestModeOverlay> {
                           icon: const Icon(Icons.copy),
                           label: const Text('Export JSON'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.maroon,
+                            backgroundColor: AppTheme.primaryColor,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),

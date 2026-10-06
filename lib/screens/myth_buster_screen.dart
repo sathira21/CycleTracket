@@ -134,10 +134,10 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
     return LangBuilder(
       builder: (context, lang) {
         return Scaffold(
-          backgroundColor: AppTheme.maroon,
+          backgroundColor: AppTheme.backgroundColor,
           appBar: AppTopBar(
             title: t('quiz_title', lang: lang),
-            dark: true,
+            dark: false,
             trailing: HideButton(
               onHide: () => _handleHide(context),
             ),
@@ -156,10 +156,10 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
 
   Widget _buildQuizView(BuildContext context, Lang lang) {
     if (_questions.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No questions available',
-          style: TextStyle(color: Colors.white70),
+          style: TextStyle(color: AppTheme.textLight),
         ),
       );
     }
@@ -181,7 +181,7 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
               'total': '$total',
             }),
             style: const TextStyle(
-              color: Colors.white70,
+              color: AppTheme.primaryColor,
               fontSize: 13,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.2,
@@ -190,8 +190,8 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
           const SizedBox(height: 8),
           AppProgressBar(
             value: progressValue,
-            color: const Color(0xFFF14E80),
-            trackColor: Colors.white24,
+            color: AppTheme.primaryColor,
+            trackColor: AppTheme.cardColor,
             height: 8,
           ),
           const SizedBox(height: 20),
@@ -238,7 +238,7 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
                   '“${question.statement.of(lang)}”',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Color(0xFF2D142C),
+                    color: AppTheme.textDark,
                     fontSize: 18.5,
                     fontWeight: FontWeight.w800,
                     height: 1.4,
@@ -262,7 +262,7 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
                 if (_selectedIsMyth == null) ...[
                   // 1. "It's a MYTH" filled pink button
                   Material(
-                    color: const Color(0xFFE83A6D),
+                    color: AppTheme.primaryColor,
                     shape: const StadiumBorder(),
                     elevation: 2,
                     clipBehavior: Clip.antiAlias,
@@ -286,12 +286,12 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  // 2. "It's a FACT" outlined maroon button
+                  // 2. "It's a FACT" outlined primary pink button
                   Material(
                     color: Colors.white,
                     shape: const StadiumBorder(
                       side: BorderSide(
-                        color: AppTheme.maroon,
+                        color: AppTheme.primaryColor,
                         width: 2,
                       ),
                     ),
@@ -304,7 +304,7 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
                           child: Text(
                             t('its_fact', lang: lang),
                             style: const TextStyle(
-                              color: AppTheme.maroon,
+                              color: AppTheme.primaryColor,
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.5,
@@ -321,7 +321,7 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
 
                   // ── Next / See Results Button ──────────────────────
                   Material(
-                    color: AppTheme.maroon,
+                    color: AppTheme.primaryColor,
                     shape: const StadiumBorder(),
                     elevation: 2,
                     clipBehavior: Clip.antiAlias,
@@ -486,7 +486,7 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
               Text(
                 lang == Lang.si ? 'ප්‍රශ්නාවලිය අවසන්!' : 'Quiz Complete!',
                 style: const TextStyle(
-                  color: Color(0xFF2D142C),
+                  color: AppTheme.textDark,
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
                 ),
@@ -500,7 +500,7 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
                   'total': '$total',
                 }),
                 style: const TextStyle(
-                  color: Color(0xFFB01848),
+                  color: AppTheme.primaryColor,
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                 ),
@@ -522,7 +522,7 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
 
               // "Play again" primary button
               Material(
-                color: const Color(0xFFE83A6D),
+                color: AppTheme.primaryColor,
                 shape: const StadiumBorder(),
                 elevation: 2,
                 clipBehavior: Clip.antiAlias,
@@ -550,7 +550,7 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
                 color: Colors.white,
                 shape: const StadiumBorder(
                   side: BorderSide(
-                    color: AppTheme.maroon,
+                    color: AppTheme.primaryColor,
                     width: 2,
                   ),
                 ),
@@ -569,7 +569,7 @@ class _MythBusterScreenState extends State<MythBusterScreen> {
                       child: Text(
                         t('back_to_hub', lang: lang),
                         style: const TextStyle(
-                          color: AppTheme.maroon,
+                          color: AppTheme.primaryColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                         ),
