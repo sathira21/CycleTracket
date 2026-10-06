@@ -41,8 +41,15 @@ Legend: `[ ]` todo, `[/]` in progress, `[x]` done.
 - [x] Top bar panic `HideButton` (REQ-3.1)
 - [x] Full test coverage (`offline_library_screen_test.dart` and `library_flow_test.dart`)
 
-## Phase 6: Myth Buster  (next)
-- [ ] `MythBusterScreen` and quiz logic
+## Phase 6: Myth Buster  (done)
+- [x] `MythBusterScreen` (S7) quiz state machine
+- [x] Header progress indicator with "QUESTION N OF 5" and `AppProgressBar`
+- [x] White question card with "?" badge, statement in quotes, and sub-prompt
+- [x] Stacked response buttons: "It's a MYTH" and "It's a FACT"
+- [x] Feedback banner with correct/incorrect badge, explanation, and "Next"
+- [x] Results summary screen with score, best score persistence, "Play again", and "Back to hub"
+- [x] Top bar panic `HideButton` (REQ-3.1)
+- [x] Full test coverage (`myth_buster_screen_test.dart` and `quiz_flow_test.dart`)
 
-## Phase 7: Offline hardening, i18n, accessibility
-## Phase 8: Test instrumentation
+## Phase 7: Offline hardening, i18n, accessibility  (next)
+- [ ] Offline hardening, Sinhala parity review, accessibility audit
