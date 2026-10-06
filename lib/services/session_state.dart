@@ -79,6 +79,12 @@ class SessionState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Programmatically unlock session for testing or bypass.
+  void unlockForTesting() {
+    _unlocked = true;
+    notifyListeners();
+  }
+
   // ── Persistence ───────────────────────────────────────────────
 
   void _loadLockout() {

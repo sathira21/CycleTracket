@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/privacy_lock_screen.dart';
+import 'screens/main_screen.dart';
 import 'screens/widget_kit_screen.dart';
 import 'services/local_storage_service.dart';
 import 'services/pin_service.dart';
@@ -41,8 +41,8 @@ class CycleCareApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Cycle Care',
         theme: AppTheme.lightTheme,
-        // Every cold start shows the lock screen (Phase 2).
-        home: const PrivacyLockScreen(),
+        // Directly takes to MainScreen (will re-enable PrivacyLockScreen later).
+        home: const MainScreen(),
         debugShowCheckedModeBanner: false,
         builder: (context, child) =>
             TestModeOverlay(child: child ?? const SizedBox()),
