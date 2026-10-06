@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../main_screen.dart';
 
 /// Placeholder for a screen owned by another team member.
 ///
@@ -64,11 +65,43 @@ class PinSetupStubScreen extends StatelessWidget {
   const PinSetupStubScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const StubScreen(
-        title: 'Set up your PIN',
-        owner: 'Member 1',
-        icon: Icons.lock_outline,
-      );
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Set up your PIN'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: AppTheme.textDark,
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.lock_outline, size: 56, color: AppTheme.primaryColor),
+              const SizedBox(height: 16),
+              Text('Set up your PIN', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 8),
+              const Text(
+                'Coming soon (Member 1)',
+                style: TextStyle(color: AppTheme.textLight),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const MainScreen()),
+                  );
+                },
+                child: const Text('Continue to App'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /// Member 4: pharmacy directory.

@@ -12,7 +12,6 @@ import '../widgets/keypad.dart';
 import '../widgets/lang_builder.dart';
 import '../widgets/pin_dots.dart';
 import 'main_screen.dart';
-import 'stubs/stub_screens.dart';
 
 /// S1 – Privacy Lock screen (REQ-3.1).
 ///
@@ -71,11 +70,12 @@ class _PrivacyLockScreenState extends State<PrivacyLockScreen>
 
   Future<void> _checkPinSetAndLockout() async {
     final session = context.read<SessionState>();
-    // If no PIN is set, route to the PIN setup stub (Member 1's screen).
+    // If no PIN is set, directly route to MainScreen.
     if (!(await session.isPinSet)) {
+      session.unlockForTesting();
       if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const PinSetupStubScreen()),
+          MaterialPageRoute(builder: (_) => const MainScreen()),
         );
       }
       return;
