@@ -252,5 +252,90 @@ void main() {
 
       await tester.pumpWidget(const SizedBox());
     });
+
+    testWidgets('displays high score at top and opens last 5 scores modal', (tester) async {
+      await tester.pumpWidget(createSubject(shuffle: false));
+      await tester.pumpAndSettle();
+
+      // Top bar displays high score
+      expect(find.text('HIGH SCORE'), findsOneWidget);
+      expect(find.byKey(const Key('high_score_display')), findsOneWidget);
+      expect(find.text('0 / 5'), findsOneWidget);
+
+      // Icon button for last 5 scores exists
+      final last5Btn = find.byKey(const Key('last_5_scores_button'));
+      expect(last5Btn, findsOneWidget);
+      expect(find.text('Last 5'), findsOneWidget);
+
+      // Tap Last 5 scores button to open bottom sheet
+      await tester.tap(last5Btn);
+      await tester.pumpAndSettle();
+
+      // Modal sheet is visible
+      expect(find.text('Last 5 High Scores'), findsOneWidget);
+      expect(find.text('No quiz scores recorded yet'), findsOneWidget);
+
+      // Close modal sheet
+      await tester.tap(find.byIcon(Icons.close_rounded));
+      await tester.pumpAndSettle();
+
+      // Modal sheet is dismissed
+      expect(find.text('No quiz scores recorded yet'), findsNothing);
+
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('completing quiz saves history and updates last 5 modal', (tester) async {
+      await tester.pumpWidget(createSubject(shuffle: false));
+      await tester.pumpAndSettle();
+
+      // Q1: Myth -> Tap Myth (Correct)
+      await tester.tap(find.text("It's a MYTH"));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Next'));
+      await tester.pumpAndSettle();
+
+      // Q2: Myth -> Tap Myth (Correct)
+      await tester.tap(find.text("It's a MYTH"));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Next'));
+      await tester.pumpAndSettle();
+
+      // Q3: Fact -> Tap Fact (Correct)
+      await tester.tap(find.text("It's a FACT"));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Next'));
+      await tester.pumpAndSettle();
+
+      // Q4: Myth -> Tap Myth (Correct)
+      await tester.tap(find.text("It's a MYTH"));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Next'));
+      await tester.pumpAndSettle();
+
+      // Q5: Fact -> Tap Fact (Correct)
+      await tester.tap(find.text("It's a FACT"));
+      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        await tester.tap(find.text('See Results'));
+        await Future.delayed(const Duration(milliseconds: 100));
+      });
+      await tester.pumpAndSettle();
+
+      // Quiz is complete, high score at top is now 5 / 5
+      expect(find.text('Quiz Complete!'), findsOneWidget);
+      expect(find.text('5 / 5'), findsWidgets);
+
+      // Open Last 5 modal
+      await tester.tap(find.byKey(const Key('last_5_scores_button')));
+      await tester.pumpAndSettle();
+
+      // Modal shows recorded score
+      expect(find.text('Last 5 High Scores'), findsOneWidget);
+      expect(find.byIcon(Icons.emoji_events_rounded), findsWidgets);
+      expect(find.text('100%'), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox());
+    });
   });
 }

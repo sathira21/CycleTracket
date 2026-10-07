@@ -266,7 +266,6 @@ class _EducationHubScreenState extends State<EducationHubScreen> {
                                       subtitle:
                                           t('topic_myth_sub', lang: lang),
                                       icon: Icons.psychology,
-                                      highlighted: true,
                                       onTap: () => AppRoutes.push(
                                         context,
                                         const MythBusterScreen(),
