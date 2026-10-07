@@ -9,6 +9,7 @@ import 'services/local_storage_service.dart';
 import 'services/pin_service.dart';
 import 'services/saved_articles_store.dart';
 import 'services/session_state.dart';
+import 'services/daily_log_store.dart';
 import 'theme/app_theme.dart';
 import 'widgets/test_mode_overlay.dart';
 
@@ -19,6 +20,7 @@ void main() async {
 
   await LocalStorageService.init();
   await SavedArticlesStore.init();
+  await DailyLogStore.init();
 
   // Dev/test seed: flutter run --dart-define=DEMO_PIN=1234
   const demoPin = String.fromEnvironment('DEMO_PIN');
