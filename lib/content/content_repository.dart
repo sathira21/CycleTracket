@@ -26,6 +26,9 @@ abstract class ContentRepository {
 
   /// The questions in their stored order (the quiz shuffles per run).
   List<MythQuestion> mythQuestions();
+
+  /// All bundled daily tips.
+  List<DailyTip> get tips;
 }
 
 class BundledRepository implements ContentRepository {
@@ -83,4 +86,7 @@ class BundledRepository implements ContentRepository {
 
   @override
   List<MythQuestion> mythQuestions() => seedMythQuestions;
+
+  @override
+  List<DailyTip> get tips => seedTips;
 }

@@ -70,7 +70,7 @@ class DashboardScreen extends StatelessWidget {
                 
                 // Daily Insights / Tips Card (Reads from Hive Database)
                 ValueListenableBuilder<Box<DailyLog>>(
-                  valueListenable: DailyLogStore.listenToLogs(),
+                  valueListenable: DailyLogStore.listenable,
                   builder: (context, box, child) {
                     final todayLog = DailyLogStore.getLogForDate(DateTime.now());
                     String title = 'Daily Insight';
