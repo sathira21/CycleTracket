@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../theme/app_theme.dart';
+import '../services/daily_log_store.dart';
+import '../models/daily_log.dart';
 import 'dart:math';
 
 class DashboardScreen extends StatelessWidget {
@@ -65,46 +68,63 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 
-                // Daily Insights / Tips Card
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF1F2), // Very light pink/red background
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppTheme.primaryColor.withOpacity(0.2), width: 1.5),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.primaryColor.withOpacity(0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            )
-                          ]
-                        ),
-                        child: const Icon(Icons.lightbulb_outline, color: AppTheme.primaryColor, size: 28),
+                // Daily Insights / Tips Card (Reads from Hive Database)
+                ValueListenableBuilder<Box<DailyLog>>(
+                  valueListenable: DailyLogStore.listenToLogs(),
+                  builder: (context, box, child) {
+                    final todayLog = DailyLogStore.getLogForDate(DateTime.now());
+                    String title = 'Daily Insight';
+                    String message = 'Stay hydrated! Drinking water helps reduce bloating during this phase of your cycle.';
+                    
+                    if (todayLog != null && (todayLog.note.isNotEmpty || todayLog.flowIntensity.isNotEmpty)) {
+                      title = 'Today\'s Logged Info';
+                      String parts = '';
+                      if (todayLog.flowIntensity.isNotEmpty) parts += 'Flow: ${todayLog.flowIntensity}. ';
+                      if (todayLog.note.isNotEmpty) parts += 'Note: ${todayLog.note}';
+                      message = parts;
+                    }
+
+                    return Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF1F2), // Very light pink/red background
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppTheme.primaryColor.withOpacity(0.2), width: 1.5),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Daily Insight', style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, fontSize: 14)),
-                            const SizedBox(height: 4),
-                            const Text('Stay hydrated! Drinking water helps reduce bloating during this phase of your cycle.', 
-                              style: TextStyle(color: AppTheme.textDark, fontSize: 14, height: 1.4),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppTheme.primaryColor.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                )
+                              ]
                             ),
-                          ],
-                        ),
+                            child: const Icon(Icons.lightbulb_outline, color: AppTheme.primaryColor, size: 28),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(title, style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, fontSize: 14)),
+                                const SizedBox(height: 4),
+                                Text(message, 
+                                  style: const TextStyle(color: AppTheme.textDark, fontSize: 14, height: 1.4),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  }
                 ),
                 const SizedBox(height: 32),
 
