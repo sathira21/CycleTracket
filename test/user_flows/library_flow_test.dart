@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 
 import 'package:cycle_care/models/cycle_entry.dart';
 import 'package:cycle_care/models/saved_article.dart';
+import 'package:cycle_care/models/starred_tip.dart';
+import 'package:cycle_care/models/daily_log.dart';
 import 'package:cycle_care/screens/article_screen.dart';
 import 'package:cycle_care/screens/education_hub_screen.dart';
 import 'package:cycle_care/screens/main_screen.dart';
@@ -44,6 +46,14 @@ void main() {
     }
     await Hive.openBox<CycleEntry>('cycle_entries');
     await Hive.openBox<SavedArticle>(SavedArticlesStore.boxName);
+    if (!Hive.isAdapterRegistered(2)) {
+      Hive.registerAdapter(DailyLogAdapter());
+    }
+    await Hive.openBox<DailyLog>('daily_logs');
+    if (!Hive.isAdapterRegistered(3)) {
+      Hive.registerAdapter(StarredTipAdapter());
+    }
+    await Hive.openBox<StarredTip>('starred_tips');
     await Hive.openBox<dynamic>('settings');
   });
 
