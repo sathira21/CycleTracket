@@ -6,17 +6,20 @@ import '../content/content_types.dart';
 import '../l10n/lang.dart';
 import '../l10n/strings.dart';
 import '../models/saved_article.dart';
+import '../models/starred_tip.dart';
 import '../routes.dart';
 import '../services/saved_articles_store.dart';
+import '../services/starred_tips_store.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_toast.dart';
 import '../widgets/article_row.dart';
 import '../widgets/lang_builder.dart';
-import '../widgets/pill_button.dart';
 import '../widgets/topic_tile.dart';
 import 'article_screen.dart';
 import 'category_screen.dart';
 import 'myth_buster_screen.dart';
 import 'offline_library_screen.dart';
+import 'starred_tips_screen.dart';
 
 /// S2 – Education Hub (the **Learn** tab).
 ///
@@ -204,6 +207,7 @@ class _EducationHubScreenState extends State<EducationHubScreen> {
                         onReadMore: tip.articleId != null
                             ? () => _openArticle(tip.articleId!)
                             : null,
+                        onStar: () => _toggleStar(tip, lang),
                       ),
                     ),
                   ),
@@ -232,63 +236,89 @@ class _EducationHubScreenState extends State<EducationHubScreen> {
                         valueListenable: SavedArticlesStore.listenable,
                         builder: (context, box, _) {
                           final savedCount = box.length;
-                          return Column(
-                            children: [
-                              Row(
+                          return ValueListenableBuilder<Box<StarredTip>>(
+                            valueListenable: StarredTipsStore.listenable,
+                            builder: (context, starredBox, _) {
+                              final starredCount = starredBox.length;
+                              return Column(
                                 children: [
-                                  Expanded(
-                                    child: TopicTile(
-                                      title: t('topic_our_body', lang: lang),
-                                      subtitle: t('topic_our_body_sub',
-                                          lang: lang),
-                                      icon: Icons.favorite_outline,
-                                      onTap: () => _openCategory('our-body'),
-                                    ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TopicTile(
+                                          title: t('topic_our_body', lang: lang),
+                                          subtitle: t('topic_our_body_sub',
+                                              lang: lang),
+                                          icon: Icons.favorite_outline,
+                                          onTap: () => _openCategory('our-body'),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: TopicTile(
+                                          title: t('topic_food', lang: lang),
+                                          subtitle:
+                                              t('topic_food_sub', lang: lang),
+                                          icon: Icons.restaurant,
+                                          onTap: () => _openCategory('food-diet'),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: TopicTile(
-                                      title: t('topic_food', lang: lang),
-                                      subtitle:
-                                          t('topic_food_sub', lang: lang),
-                                      icon: Icons.restaurant,
-                                      onTap: () => _openCategory('food-diet'),
-                                    ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TopicTile(
+                                          title: t('topic_myth', lang: lang),
+                                          subtitle:
+                                              t('topic_myth_sub', lang: lang),
+                                          icon: Icons.psychology,
+                                          onTap: () => AppRoutes.push(
+                                            context,
+                                            const MythBusterScreen(),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: TopicTile(
+                                          title: t('topic_library', lang: lang),
+                                          subtitle: t('guides_offline',
+                                              lang: lang,
+                                              params: {'n': '$savedCount'}),
+                                          icon: Icons.bookmark_outline,
+                                          onTap: () => AppRoutes.push(
+                                            context,
+                                            const OfflineLibraryScreen(),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TopicTile(
+                                          title: t('topic_starred', lang: lang),
+                                          subtitle: t('topic_starred_sub',
+                                              lang: lang,
+                                              params: {'n': '$starredCount'}),
+                                          icon: Icons.star_outline,
+                                          onTap: () => AppRoutes.push(
+                                            context,
+                                            const StarredTipsScreen(),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      const Expanded(child: SizedBox()),
+                                    ],
                                   ),
                                 ],
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TopicTile(
-                                      title: t('topic_myth', lang: lang),
-                                      subtitle:
-                                          t('topic_myth_sub', lang: lang),
-                                      icon: Icons.psychology,
-                                      onTap: () => AppRoutes.push(
-                                        context,
-                                        const MythBusterScreen(),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: TopicTile(
-                                      title: t('topic_library', lang: lang),
-                                      subtitle: t('guides_offline',
-                                          lang: lang,
-                                          params: {'n': '$savedCount'}),
-                                      icon: Icons.bookmark_outline,
-                                      onTap: () => AppRoutes.push(
-                                        context,
-                                        const OfflineLibraryScreen(),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                              );
+                            },
                           );
                         },
                       ),
@@ -309,6 +339,24 @@ class _EducationHubScreenState extends State<EducationHubScreen> {
   }
 
   // ── Navigation helpers ──────────────────────────────────────────
+
+  void _toggleStar(DailyTip tip, Lang lang) async {
+    final starred = await StarredTipsStore.toggle(
+      tipId: tip.id,
+      contentEn: tip.text.en,
+      contentSi: tip.text.si,
+      category: 'daily_tip',
+    );
+    if (mounted) {
+      AppToast.show(
+        context,
+        icon: starred ? Icons.star : Icons.star_border,
+        message: starred
+            ? t('starred_added', lang: lang)
+            : t('starred_removed', lang: lang),
+      );
+    }
+  }
 
   void _openCategory(String categoryId) {
     AppRoutes.push(context, CategoryScreen(categoryId: categoryId));
@@ -338,11 +386,13 @@ class _DailyTipCard extends StatelessWidget {
     required this.tip,
     required this.lang,
     this.onReadMore,
+    this.onStar,
   });
 
   final DailyTip tip;
   final Lang lang;
   final VoidCallback? onReadMore;
+  final VoidCallback? onStar;
 
   @override
   Widget build(BuildContext context) {
@@ -387,6 +437,25 @@ class _DailyTipCard extends StatelessWidget {
                   letterSpacing: 0.5,
                 ),
               ),
+              const Spacer(),
+              if (onStar != null)
+                GestureDetector(
+                  onTap: onStar,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      StarredTipsStore.isStarred(tip.id)
+                          ? Icons.star
+                          : Icons.star_border,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 12),
