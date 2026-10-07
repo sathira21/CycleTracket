@@ -60,6 +60,13 @@ const Map<String, String> stringsEn = {
   'quiz_result': 'You got {score} of {total}',
   'play_again': 'Play again',
   'back_to_hub': 'Back to hub',
+  'quiz_high_score': 'High Score',
+  'last_5_scores': 'Last 5 High Scores',
+  'last_5_button': 'Last 5',
+  'top_5_scores': 'Top 5 Scores',
+  'recent_attempts': 'Recent Attempts',
+  'no_scores_recorded': 'No quiz scores recorded yet',
+  'play_quiz_to_record': 'Complete a quiz to set your high scores!',
 };
 
 const Map<String, String> stringsSi = {
@@ -120,6 +127,13 @@ const Map<String, String> stringsSi = {
   'quiz_result': 'ඔබ {total} න් {score} ක් ලබා ගත්තා',
   'play_again': 'නැවත සෙල්ලම් කරන්න',
   'back_to_hub': 'මුල් පිටුවට ආපසු',
+  'quiz_high_score': 'හොඳම ලකුණු',
+  'last_5_scores': 'පසුගිය හොඳම ලකුණු 5',
+  'last_5_button': 'පසුගිය 5',
+  'top_5_scores': 'හොඳම 5',
+  'recent_attempts': 'මෑත උත්සාහයන්',
+  'no_scores_recorded': 'තවම ලකුණු සටහන් කර නැත',
+  'play_quiz_to_record': 'ඔබේ හොඳම ලකුණු සටහන් කර ගැනීමට ප්‍රශ්නාවලියක් සම්පූර්ණ කරන්න!',
 };
 
 /// Looks up a UI string. Falls back to English, then to the key itself.
