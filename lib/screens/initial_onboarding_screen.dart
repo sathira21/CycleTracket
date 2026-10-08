@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../l10n/lang.dart';
 import '../l10n/strings.dart';
 import '../theme/app_theme.dart';
-import '../l10n/strings.dart';
 import '../widgets/lang_builder.dart';
 import 'pin_setup_screen.dart';
 
