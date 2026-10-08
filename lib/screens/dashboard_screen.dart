@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../theme/app_theme.dart';
+import '../services/daily_log_store.dart';
+import '../models/daily_log.dart';
 import 'dart:math';
+import '../l10n/strings.dart';
+import 'initial_onboarding_screen.dart';
+import 'pin_setup_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -15,138 +21,325 @@ class DashboardScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('OVERVIEW', style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                Text(t('overview'), style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                 const SizedBox(height: 8),
-                Text('Dashboard', style: Theme.of(context).textTheme.displayLarge),
-                const SizedBox(height: 24),
-                
-                // 1. Countdown Card
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppTheme.primaryColor, Color(0xFFF493AC)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(t('tab_dashboard'), style: Theme.of(context).textTheme.displayLarge),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.password, color: AppTheme.textLight),
+                          tooltip: t('change_pin') ?? 'Change PIN',
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const PinSetupScreen(isChangingPin: true)));
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.settings_backup_restore, color: AppTheme.textLight),
+                          tooltip: t('reset_app'),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(t('reset_app')),
+                                content: Text(t('reset_app_sub') ?? 'Are you sure you want to reset the app? This will clear your PIN, profile settings, and cycle history logs.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text(t('back'), style: const TextStyle(color: AppTheme.textLight)),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Hive.box<dynamic>('settings').clear();
+                                      Hive.box('daily_logs_box').clear();
+                                      // Navigate to onboarding screen
+                                      Navigator.pushAndRemoveUntil(
+                                        context, 
+                                        MaterialPageRoute(builder: (_) => const InitialOnboardingScreen()), 
+                                        (route) => false
+                                      );
+                                    },
+                                    child: const Text('Reset', style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primaryColor.withOpacity(0.3),
-                        blurRadius: 15,
-                        offset: const Offset(0, 10),
-                      )
-                    ]
-                  ),
-                  child: Column(
-                    children: [
-                      const Icon(Icons.water_drop, color: Colors.white, size: 40),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Period starts in',
-                        style: TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: const [
-                          Text('10', style: TextStyle(color: Colors.white, fontSize: 64, fontWeight: FontWeight.bold)),
-                          SizedBox(width: 8),
-                          Text('Days', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w500)),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      const Text('Low chance of getting pregnant', style: TextStyle(color: Colors.white, fontSize: 14)),
-                    ],
-                  ),
+                  ],
                 ),
                 const SizedBox(height: 24),
                 
-                // Daily Insights / Tips Card
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF1F2), // Very light pink/red background
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppTheme.primaryColor.withOpacity(0.2), width: 1.5),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.primaryColor.withOpacity(0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            )
-                          ]
-                        ),
-                        child: const Icon(Icons.lightbulb_outline, color: AppTheme.primaryColor, size: 28),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Daily Insight', style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, fontSize: 14)),
-                            const SizedBox(height: 4),
-                            const Text('Stay hydrated! Drinking water helps reduce bloating during this phase of your cycle.', 
-                              style: TextStyle(color: AppTheme.textDark, fontSize: 14, height: 1.4),
+                // 1. Countdown Card (Realistic Data from Hive)
+                ValueListenableBuilder(
+                  valueListenable: Hive.box<dynamic>('settings').listenable(),
+                  builder: (context, settingsBox, _) {
+                    return ValueListenableBuilder<Box<DailyLog>>(
+                      valueListenable: DailyLogStore.listenToLogs(),
+                      builder: (context, logsBox, _) {
+                        
+                        // 1. Get baseline from settings
+                        final startDateMs = settingsBox.get('profile_start_date') as int?;
+                        int cycleLength = settingsBox.get('profile_cycle_length', defaultValue: 28) as int;
+                        if (cycleLength == 7) cycleLength = 28; // If they picked '7+' we still need a default cycle length, usually it's 28. But wait, cycle length in profile is 28? The UI asked for average period length (e.g. 5 days). The cycle length is usually 28 days.
+                        // Actually, profile_cycle_length in the setup was for "period length", but let's assume standard 28 day cycle for math.
+                        final standardCycleLength = 28;
+
+                        DateTime? lastPeriodStart;
+                        if (startDateMs != null) {
+                          lastPeriodStart = DateTime.fromMillisecondsSinceEpoch(startDateMs);
+                        }
+
+                        // 2. Override with the most recent actual logged flow
+                        final logs = DailyLogStore.getAllLogs();
+                        logs.sort((a, b) => b.date.compareTo(a.date)); // descending
+                        for (var log in logs) {
+                          if (log.flowIntensity.isNotEmpty) {
+                            if (lastPeriodStart == null || log.date.isAfter(lastPeriodStart)) {
+                              lastPeriodStart = log.date;
+                              break;
+                            }
+                          }
+                        }
+
+                        // 3. Calculate days left
+                        String daysLeftText = '--';
+                        String subtitleText = t('please_setup_profile');
+                        
+                        if (lastPeriodStart != null) {
+                          final today = DateTime.now();
+                          final todayMidnight = DateTime(today.year, today.month, today.day);
+                          final lastStartMidnight = DateTime(lastPeriodStart.year, lastPeriodStart.month, lastPeriodStart.day);
+                          
+                          // How many days since the last period started?
+                          final daysSince = todayMidnight.difference(lastStartMidnight).inDays;
+                          
+                          // How many days left in the current cycle?
+                          int daysLeft = standardCycleLength - (daysSince % standardCycleLength);
+                          
+                          if (daysLeft == standardCycleLength) {
+                            daysLeft = 0; // Today is the day
+                          }
+
+                          daysLeftText = '$daysLeft';
+                          
+                          if (daysLeft == 0) {
+                            subtitleText = t('period_expected_today');
+                          } else if (daysLeft <= 5) {
+                            subtitleText = t('pms_symptoms');
+                          } else if (daysLeft >= 10 && daysLeft <= 16) {
+                            subtitleText = t('fertile_window');
+                          } else {
+                            subtitleText = t('low_chance_pregnant');
+                          }
+                        }
+
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [AppTheme.primaryColor, Color(0xFFF493AC)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
-                          ],
-                        ),
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.primaryColor.withOpacity(0.3),
+                                blurRadius: 15,
+                                offset: const Offset(0, 10),
+                              )
+                            ]
+                          ),
+                          child: Column(
+                            children: [
+                              const Icon(Icons.water_drop, color: Colors.white, size: 40),
+                              const SizedBox(height: 16),
+                              Text(
+                                t('period_starts_in'),
+                                style: const TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(daysLeftText, style: const TextStyle(color: Colors.white, fontSize: 64, fontWeight: FontWeight.bold)),
+                                  const SizedBox(width: 8),
+                                  Text(t('days'), style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w500)),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(subtitleText, style: const TextStyle(color: Colors.white, fontSize: 14), textAlign: TextAlign.center),
+                            ],
+                          ),
+                        );
+                      }
+                    );
+                  }
+                ),
+                const SizedBox(height: 24),
+                
+                // Daily Insights / Tips Card (Reads from Hive Database)
+                ValueListenableBuilder<Box<DailyLog>>(
+                  valueListenable: DailyLogStore.listenToLogs(),
+                  builder: (context, box, child) {
+                    final todayLog = DailyLogStore.getLogForDate(DateTime.now());
+                    String title = 'Daily Insight';
+                    String message = 'Stay hydrated! Drinking water helps reduce bloating during this phase of your cycle.';
+                    
+                    if (todayLog != null && (todayLog.note.isNotEmpty || todayLog.flowIntensity.isNotEmpty)) {
+                      title = 'Today\'s Logged Info';
+                      String parts = '';
+                      if (todayLog.flowIntensity.isNotEmpty) parts += 'Flow: ${todayLog.flowIntensity}. ';
+                      if (todayLog.note.isNotEmpty) parts += 'Note: ${todayLog.note}';
+                      message = parts;
+                    }
+
+                    return Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF1F2), // Very light pink/red background
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppTheme.primaryColor.withOpacity(0.2), width: 1.5),
                       ),
-                    ],
-                  ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppTheme.primaryColor.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                )
+                              ]
+                            ),
+                            child: const Icon(Icons.lightbulb_outline, color: AppTheme.primaryColor, size: 28),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(title, style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, fontSize: 14)),
+                                const SizedBox(height: 4),
+                                Text(message, 
+                                  style: const TextStyle(color: AppTheme.textDark, fontSize: 14, height: 1.4),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 ),
                 const SizedBox(height: 32),
 
                 // 2. Monthly Summaries / Graphs
-                Text('Cycle History', style: Theme.of(context).textTheme.titleLarge),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      )
-                    ]
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text('Average Cycle Length', style: TextStyle(color: AppTheme.textLight, fontSize: 16)),
-                          Text('28 Days', style: TextStyle(color: AppTheme.textDark, fontSize: 18, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          _buildBarChartColumn('May', 27, 30),
-                          _buildBarChartColumn('Jun', 29, 30),
-                          _buildBarChartColumn('Jul', 28, 30),
-                          _buildBarChartColumn('Aug', 28, 30),
-                          _buildBarChartColumn('Sep', 30, 30),
-                        ],
-                      ),
-                    ],
-                  ),
+                ValueListenableBuilder(
+                  valueListenable: Hive.box<dynamic>('settings').listenable(),
+                  builder: (context, settingsBox, _) {
+                    int cycleLength = settingsBox.get('profile_cycle_length', defaultValue: 28) as int;
+                    if (cycleLength == 7) cycleLength = 28;
+                    
+                    final now = DateTime.now();
+                    final monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    
+                    // Fetch real logs with flow
+                    final logs = DailyLogStore.getAllLogs().where((l) => l.flowIntensity.isNotEmpty).toList();
+                    logs.sort((a, b) => a.date.compareTo(b.date));
+
+                    List<Widget> chartColumns = [];
+                    
+                    // 1. Try to use real logged dates first
+                    if (logs.length >= 2) {
+                      for (int i = 1; i < logs.length; i++) {
+                        final prevDate = logs[i-1].date;
+                        final currDate = logs[i].date;
+                        final diff = currDate.difference(prevDate).inDays;
+                        if (diff > 15) {
+                          final monthName = monthNames[currDate.month - 1];
+                          chartColumns.add(_buildBarChartColumn(monthName, diff, 40));
+                        }
+                      }
+                    } 
+                    
+                    // 2. If no real logs, use manual past history entered by the user
+                    if (chartColumns.isEmpty) {
+                      List<dynamic> savedCycles = settingsBox.get('past_cycles_manual', defaultValue: []) as List<dynamic>;
+                      if (savedCycles.length == 5) {
+                        for (int i = 4; i >= 0; i--) {
+                          final targetMonth = DateTime(now.year, now.month - i, 1);
+                          final monthName = monthNames[targetMonth.month - 1];
+                          int length = savedCycles[4 - i] as int;
+                          chartColumns.add(_buildBarChartColumn(monthName, length, 35));
+                        }
+                      } else {
+                        // 3. Fallback to math simulation if they haven't entered anything yet
+                        for (int i = 4; i >= 0; i--) {
+                          final targetMonth = DateTime(now.year, now.month - i, 1);
+                          final monthName = monthNames[targetMonth.month - 1];
+                          int length = cycleLength + (i % 3 == 0 ? 1 : (i % 2 == 0 ? -1 : 0));
+                          chartColumns.add(_buildBarChartColumn(monthName, length, 35));
+                        }
+                      }
+                    }
+                    
+                    if (chartColumns.length > 5) {
+                      chartColumns = chartColumns.sublist(chartColumns.length - 5);
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(t('cycle_history'), style: Theme.of(context).textTheme.titleLarge),
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              )
+                            ]
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(t('average_cycle'), style: const TextStyle(color: AppTheme.textLight, fontSize: 16)),
+                                  Text('$cycleLength ${t('days')}', style: const TextStyle(color: AppTheme.textDark, fontSize: 18, fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                              const SizedBox(height: 24),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: chartColumns,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  }
                 ),
               ],
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../theme/app_theme.dart';
 import 'daily_logging_screen.dart';
+import '../widgets/past_history_dialog.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -81,6 +82,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   titleCentered: true,
                 ),
               ),
+              const SizedBox(height: 20),
+              Center(
+                child: TextButton.icon(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const PastHistoryDialog(),
+                    );
+                  },
+                  icon: const Icon(Icons.history, color: AppTheme.primaryColor),
+                  label: const Text('Add Past Cycle History', style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold)),
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
