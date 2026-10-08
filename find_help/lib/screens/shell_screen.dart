@@ -23,6 +23,7 @@ class ShellScreen extends StatelessWidget {
           ResultsScreen(showBack: false),
           SavedScreen(showBack: false),
           _FeedbackTab(),
+          HomeScreen(openMap: true),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -52,6 +53,11 @@ class ShellScreen extends StatelessWidget {
             icon: Icon(Icons.favorite_border_rounded),
             selectedIcon: Icon(Icons.favorite_rounded, color: AppColors.primary),
             label: 'Feedback',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.location_on_outlined),
+            selectedIcon: Icon(Icons.location_on, color: AppColors.primary),
+            label: 'Location',
           ),
         ],
       ),

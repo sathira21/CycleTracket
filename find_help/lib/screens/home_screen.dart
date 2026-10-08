@@ -17,14 +17,16 @@ import 'search_screen.dart';
 import 'supplies_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.openMap = false});
+
+  final bool openMap;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var _map = false;
+  late var _map = widget.openMap;
   final _search = TextEditingController();
   final _focus = FocusNode();
 
