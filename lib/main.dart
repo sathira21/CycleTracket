@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'screens/initial_onboarding_screen.dart';
+import 'screens/privacy_lock_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/widget_kit_screen.dart';
 import 'services/local_storage_service.dart';
@@ -43,8 +45,28 @@ class CycleCareApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Cycle Care',
         theme: AppTheme.lightTheme,
-        // Directly takes to MainScreen (will re-enable PrivacyLockScreen later).
-        home: const MainScreen(),
+        home: FutureBuilder<bool>(
+          future: pinService.isSet(),
+          builder: (context, snapshot) {
+            // While checking, show a blank loading screen or splash
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                backgroundColor: AppTheme.backgroundColor,
+                body: Center(child: CircularProgressIndicator(color: AppTheme.primaryColor)),
+              );
+            }
+            
+            final isPinSet = snapshot.data ?? false;
+            
+            if (isPinSet) {
+              // Old user -> Ask for PIN
+              return const PrivacyLockScreen();
+            } else {
+              // New user -> Setup flow
+              return const InitialOnboardingScreen();
+            }
+          },
+        ),
         debugShowCheckedModeBanner: false,
         builder: (context, child) =>
             TestModeOverlay(child: child ?? const SizedBox()),
