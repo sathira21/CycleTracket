@@ -120,11 +120,11 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                 children: [
                   const BackButtonRound(),
                   const SizedBox(width: 10),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('My pharmacies', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                        Text('My pharmacies', style: Theme.of(context).textTheme.displayLarge),
                         Text(
                           'Create, edit, and delete places stored on this phone',
                           style: TextStyle(color: AppColors.muted, fontSize: 11),

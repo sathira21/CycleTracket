@@ -117,11 +117,11 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
                     const BackButtonRound(),
                     const SizedBox(width: 10),
                   ],
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Supply Readiness', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                        Text('Supply Readiness', style: Theme.of(context).textTheme.displayLarge),
                         Text(
                           'Track essentials before a pharmacy visit in Sri Lanka',
                           style: TextStyle(color: AppColors.muted, fontSize: 11),

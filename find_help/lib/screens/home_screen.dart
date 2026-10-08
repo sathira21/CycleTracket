@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final recent = app.history.isEmpty ? null : app.history.first;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F6F8),
+      backgroundColor: AppColors.blush,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
@@ -83,9 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Find Help\nNearby',
-              style: TextStyle(fontSize: 32, height: 1.02, fontWeight: FontWeight.w800, letterSpacing: -0.8),
+              style: Theme.of(context).textTheme.displayLarge,
             ),
             const SizedBox(height: 12),
             TextField(
@@ -247,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _DueBanner(reminder: app.dueReminders.first),
             ],
             const SizedBox(height: 16),
-            const Text('Your lists', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+            Text('Your lists', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             Row(
               children: [

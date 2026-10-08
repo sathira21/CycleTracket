@@ -82,10 +82,10 @@ class _LocationCard extends StatelessWidget {
               child: const Icon(Icons.location_on_rounded, color: Colors.white, size: 30),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Allow Find Help to use your location?',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, height: 1.25, fontWeight: FontWeight.w800),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             const Text(

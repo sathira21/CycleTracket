@@ -77,11 +77,11 @@ class _FiltersScreenState extends State<FiltersScreen> {
               padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
               child: Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Filters', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -0.6)),
+                        Text('Filters', style: Theme.of(context).textTheme.displayLarge),
                         SizedBox(height: 2),
                         Text('Distance, open now, and what you need', style: TextStyle(color: AppColors.muted, fontSize: 13)),
                       ],

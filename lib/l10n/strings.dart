@@ -13,6 +13,7 @@ const Map<String, String> stringsEn = {
   'tab_dashboard': 'Dashboard',
   'tab_calendar': 'Calendar',
   'tab_learn': 'Learn',
+  'tab_location': 'Location',
   // Privacy lock
   'lock_title': 'Enter Confidential PIN',
   'lock_subtitle': 'Keep your cycle & health records private',
@@ -148,6 +149,7 @@ const Map<String, String> stringsSi = {
   'tab_dashboard': 'දර්ශකය',
   'tab_calendar': 'දින දර්ශනය',
   'tab_learn': 'ඉගෙන ගන්න',
+  'tab_location': 'ස්ථානය',
   // Privacy lock
   'lock_title': 'රහස්‍ය PIN අංකය ඇතුළත් කරන්න',
   'lock_subtitle': 'ඔබේ චක්‍ර සහ සෞඛ්‍ය වාර්තා පෞද්ගලිකව තබා ගන්න',
