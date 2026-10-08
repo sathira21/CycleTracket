@@ -91,7 +91,7 @@ class _NotesScreenState extends State<NotesScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Notes', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+                      Text('Notes', style: Theme.of(context).textTheme.displayLarge),
                       Text('Write, edit, or delete a visit note', style: TextStyle(color: AppColors.muted, fontSize: 12)),
                     ],
                   ),

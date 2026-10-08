@@ -129,7 +129,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Reminders', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+                      Text('Reminders', style: Theme.of(context).textTheme.displayLarge),
                       Text('Pick a date and time. Due alerts show while the app is open.', style: TextStyle(color: AppColors.muted, fontSize: 12)),
                     ],
                   ),

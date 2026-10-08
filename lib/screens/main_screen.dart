@@ -5,6 +5,7 @@ import '../widgets/lang_builder.dart';
 import 'dashboard_screen.dart';
 import 'calendar_screen.dart';
 import 'education_hub_screen.dart';
+import 'find_help_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -20,7 +21,6 @@ class _MainScreenState extends State<MainScreen> {
     DashboardScreen(),
     CalendarScreen(),
     EducationHubScreen(),
-    _LocationScreen(),
   ];
 
   @override
@@ -47,6 +47,12 @@ class _MainScreenState extends State<MainScreen> {
             child: BottomNavigationBar(
               currentIndex: _currentIndex,
               onTap: (index) {
+                if (index == 3) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => const FindHelpScreen()),
+                  );
+                  return;
+                }
                 setState(() {
                   _currentIndex = index;
                 });
@@ -78,36 +84,6 @@ class _MainScreenState extends State<MainScreen> {
                   icon: const Icon(Icons.location_on_outlined),
                   activeIcon: const Icon(Icons.location_on),
                   label: t('tab_location', lang: lang),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _LocationScreen extends StatelessWidget {
-  const _LocationScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return LangBuilder(
-      builder: (context, lang) => Scaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  t('tab_location', lang: lang),
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
-                const SizedBox(height: 28),
-                const Center(
-                  child: Icon(Icons.location_on, color: AppTheme.primaryColor, size: 72),
                 ),
               ],
             ),

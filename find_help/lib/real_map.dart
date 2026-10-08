@@ -24,6 +24,7 @@ class PlacePhoto extends StatelessWidget {
   Widget build(BuildContext context) {
     final image = Image.asset(
       place.photo,
+      package: 'find_help',
       height: height,
       width: double.infinity,
       fit: BoxFit.cover,

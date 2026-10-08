@@ -142,7 +142,7 @@ class _SavedScreenState extends State<SavedScreen> with SingleTickerProviderStat
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Saved places', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                        Text('Saved places', style: Theme.of(context).textTheme.displayLarge),
                         Text(
                           '${items.length} places ready for your next visit',
                           style: const TextStyle(color: Color(0xFF64748B), fontSize: 11),
@@ -381,7 +381,7 @@ class _Summary extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             '$count saved ${count == 1 ? 'place' : 'places'}',
-                            style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
                           ),
                           const SizedBox(height: 2),
                           const Row(

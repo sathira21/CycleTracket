@@ -282,7 +282,7 @@ class GradientButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           boxShadow: const [
             BoxShadow(
-              color: Color(0x40E21886),
+              color: Color(0x40E97495),
               blurRadius: 18,
               offset: Offset(0, 8),
             ),
@@ -303,8 +303,8 @@ class GradientButton extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -346,7 +346,7 @@ class OutlineButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.w700),
+          style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -364,8 +364,8 @@ class SectionLabel extends StatelessWidget {
       text.toUpperCase(),
       style: const TextStyle(
         color: AppColors.primaryDark,
-        fontSize: 11,
-        fontWeight: FontWeight.w800,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
         letterSpacing: 1.1,
       ),
     );

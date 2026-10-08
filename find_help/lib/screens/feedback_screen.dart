@@ -53,10 +53,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     const BackButtonRound(),
                     const SizedBox(width: 12),
                   ],
-                  const Expanded(
+                  Expanded(
                     child: Text(
                       'How was your visit?',
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
                 ],

@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+/// Same palette as the Cycle Care screens (dashboard, calendar, learn).
 class AppColors {
-  static const blush = Color(0xFFFFF6F9);
-  static const blushDeep = Color(0xFFFCE8F2);
-  static const primary = Color(0xFFE21886);
-  static const primaryDark = Color(0xFF9F0D71);
-  static const plum = Color(0xFF3A122C);
-  static const ink = Color(0xFF1C1220);
-  static const muted = Color(0xFF8B7382);
-  static const line = Color(0xFFF3D6E6);
-  static const card = Color(0xFFFCE8F2);
-  static const teal = Color(0xFFE21886);
-  static const tealDeep = Color(0xFF3A122C);
+  static const blush = Color(0xFFFDF2F8);
+  static const blushDeep = Color(0xFFFFE4E6);
+  static const primary = Color(0xFFE97495);
+  static const primaryDark = Color(0xFFB01848);
+  static const plum = Color(0xFF4C1D95);
+  static const ink = Color(0xFF4C1D95);
+  static const muted = Color(0xFF9CA3AF);
+  static const line = Color(0xFFFFE4E6);
+  static const card = Color(0xFFFFE4E6);
+  static const teal = Color(0xFFE97495);
+  static const tealDeep = Color(0xFF4A0F2B);
 
   static const primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFFF4B9A), Color(0xFFC2186A)],
+    colors: [Color(0xFFE97495), Color(0xFFB01848)],
   );
 
   static const cardShadow = [
     BoxShadow(
-      color: Color(0x16E21886),
+      color: Color(0x16E97495),
       blurRadius: 28,
       offset: Offset(0, 12),
     ),
@@ -29,44 +31,65 @@ class AppColors {
 }
 
 ThemeData buildTheme() {
-  final base = ThemeData(
+  final textTheme = GoogleFonts.outfitTextTheme().copyWith(
+    displayLarge: GoogleFonts.outfit(
+      color: AppColors.ink,
+      fontSize: 32,
+      fontWeight: FontWeight.bold,
+      height: 1.05,
+    ),
+    titleLarge: GoogleFonts.outfit(
+      color: AppColors.ink,
+      fontSize: 24,
+      fontWeight: FontWeight.w600,
+    ),
+    bodyLarge: GoogleFonts.outfit(color: AppColors.ink, fontSize: 16),
+    bodyMedium: GoogleFonts.outfit(color: AppColors.ink, fontSize: 14),
+  ).apply(fontFamilyFallback: [GoogleFonts.notoSansSinhala().fontFamily!]);
+
+  return ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
+    primaryColor: AppColors.primary,
     scaffoldBackgroundColor: AppColors.blush,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.primary,
+    colorScheme: ColorScheme.light(
       primary: AppColors.primary,
+      secondary: AppColors.primary,
       surface: AppColors.card,
     ),
+    textTheme: textTheme,
     splashFactory: InkRipple.splashFactory,
-  );
-
-  return base.copyWith(
-    textTheme: base.textTheme.apply(
-      bodyColor: AppColors.ink,
-      displayColor: AppColors.ink,
-    ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       backgroundColor: AppColors.plum,
-      contentTextStyle: const TextStyle(
+      contentTextStyle: GoogleFonts.outfit(
         color: Colors.white,
+        fontSize: 14,
         fontWeight: FontWeight.w600,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        textStyle: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: AppColors.card,
+      fillColor: Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      hintStyle: const TextStyle(color: Color(0xFFC4A8B6), fontWeight: FontWeight.w500),
+      hintStyle: GoogleFonts.outfit(color: AppColors.muted, fontSize: 14, fontWeight: FontWeight.w500),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Color(0xFFE8E0E5)),
+        borderSide: const BorderSide(color: AppColors.line),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Color(0xFFE8E0E5)),
+        borderSide: const BorderSide(color: AppColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),

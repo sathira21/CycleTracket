@@ -116,11 +116,7 @@ class DetailsScreen extends StatelessWidget {
                                             type: MaterialType.transparency,
                                             child: Text(
                                               place.name,
-                                              style: const TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.w800,
-                                                letterSpacing: -0.4,
-                                              ),
+                                              style: Theme.of(context).textTheme.titleLarge,
                                             ),
                                           ),
                                         ),

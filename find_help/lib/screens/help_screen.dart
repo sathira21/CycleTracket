@@ -23,7 +23,7 @@ class HelpScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Help', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+                      Text('Help', style: Theme.of(context).textTheme.displayLarge),
                       Text('How to find pharmacies and clinics', style: TextStyle(color: AppColors.muted, fontSize: 12)),
                     ],
                   ),

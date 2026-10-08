@@ -81,7 +81,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Filters', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -0.6)),
+                        Text('Filters', style: Theme.of(context).textTheme.displayLarge),
                         SizedBox(height: 2),
                         Text('Distance, open now, and what you need', style: TextStyle(color: AppColors.muted, fontSize: 13)),
                       ],

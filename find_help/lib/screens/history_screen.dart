@@ -27,7 +27,7 @@ class HistoryScreen extends StatelessWidget {
                   const Expanded(
                     child: Column(
                       children: [
-                        Text('Visit history', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                        Text('Visit history', style: Theme.of(context).textTheme.displayLarge),
                         SizedBox(height: 2),
                         Text(
                           'Every pharmacy you opened',
