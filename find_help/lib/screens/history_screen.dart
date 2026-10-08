@@ -24,7 +24,7 @@ class HistoryScreen extends StatelessWidget {
               child: Row(
                 children: [
                   const BackButtonRound(),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       children: [
                         Text('Visit history', style: Theme.of(context).textTheme.displayLarge),

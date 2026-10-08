@@ -15,7 +15,7 @@ class HelpScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
           children: [
-            const Row(
+            Row(
               children: [
                 BackButtonRound(),
                 SizedBox(width: 10),

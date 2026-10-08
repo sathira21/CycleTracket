@@ -87,7 +87,7 @@ class _NotesScreenState extends State<NotesScreen> {
               children: [
                 const BackButtonRound(),
                 const SizedBox(width: 10),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

@@ -117,7 +117,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
                     const BackButtonRound(),
                     const SizedBox(width: 10),
                   ],
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
