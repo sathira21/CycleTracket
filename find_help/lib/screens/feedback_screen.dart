@@ -188,7 +188,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                   },
                           ),
                   ),
-                  if (!_done && AppScope.of(context).feedbackFor(widget.place.id) != null)
+                  if (AppScope.of(context).feedbackFor(widget.place.id) != null)
                     TextButton(
                       onPressed: () {
                         AppScope.of(context).removeFeedback(widget.place.id);

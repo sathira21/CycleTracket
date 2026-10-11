@@ -11,6 +11,7 @@ import 'search_screen.dart';
 Future<void> showLocationPrompt(BuildContext context) {
   return showGeneralDialog<void>(
     context: context,
+    useRootNavigator: false,
     barrierDismissible: true,
     barrierLabel: 'Location access',
     barrierColor: Colors.transparent,
@@ -130,7 +131,7 @@ class _LocationCard extends StatelessWidget {
               label: "Don't allow",
               fill: const Color(0xFFFFF4F9),
               onPressed: () {
-                final navigator = Navigator.of(context, rootNavigator: true);
+                final navigator = Navigator.of(context);
                 AppScope.of(context).denyLocation();
                 navigator.pop();
                 navigator.push(AppPageRoute(page: const SearchScreen()));

@@ -73,35 +73,57 @@ class _AnimatedFinderMapState extends State<AnimatedFinderMap> {
   @override
   void didUpdateWidget(covariant AnimatedFinderMap oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _fit();
+    if (_pinKey(oldWidget.pins) != _pinKey(widget.pins)) _scheduleFit();
+  }
+
+  String _pinKey(List<Place> pins) => pins.map((place) => '${place.id}:${place.lat}:${place.lng}').join('|');
+
+  void _scheduleFit() {
+    if (!_ready) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_ready) return;
+      _fit();
+    });
   }
 
   void _fit() {
-    if (!_ready) return;
-    final app = AppScope.of(context);
-    final here = LatLng(app.originLat, app.originLng);
-    final closeToResults = widget.pins.any(
-      (place) => haversineKm(here.latitude, here.longitude, place.lat, place.lng) < 40,
-    );
-    final points = <LatLng>[
-      for (final place in widget.pins) LatLng(place.lat, place.lng),
-      if (closeToResults) here,
-    ];
-    if (points.isEmpty) {
-      _controller.move(const LatLng(6.8412, 79.9654), 13);
-      return;
+    try {
+      final app = AppScope.of(context);
+      final here = LatLng(app.originLat, app.originLng);
+      final closeToResults = widget.pins.any(
+        (place) => haversineKm(here.latitude, here.longitude, place.lat, place.lng) < 40,
+      );
+      final points = <LatLng>[
+        for (final place in widget.pins) LatLng(place.lat, place.lng),
+        if (closeToResults) here,
+      ];
+      if (points.isEmpty) {
+        _controller.move(const LatLng(6.8412, 79.9654), 13);
+        return;
+      }
+      if (points.length == 1) {
+        _controller.move(points.first, 15);
+        return;
+      }
+      final bounds = LatLngBounds.fromPoints(points);
+      if (bounds.north == bounds.south && bounds.east == bounds.west) {
+        _controller.move(points.first, 15);
+        return;
+      }
+      _controller.fitCamera(
+        CameraFit.bounds(
+          bounds: bounds,
+          padding: const EdgeInsets.all(42),
+          maxZoom: 16,
+        ),
+      );
+    } catch (_) {
+      try {
+        if (widget.pins.isNotEmpty) {
+          _controller.move(LatLng(widget.pins.first.lat, widget.pins.first.lng), 14);
+        }
+      } catch (_) {}
     }
-    if (points.length == 1) {
-      _controller.move(points.first, 15);
-      return;
-    }
-    _controller.fitCamera(
-      CameraFit.bounds(
-        bounds: LatLngBounds.fromPoints(points),
-        padding: const EdgeInsets.all(42),
-        maxZoom: 16,
-      ),
-    );
   }
 
   @override
@@ -125,9 +147,16 @@ class _AnimatedFinderMapState extends State<AnimatedFinderMap> {
             options: MapOptions(
               initialCenter: user,
               initialZoom: 13,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.drag |
+                    InteractiveFlag.flingAnimation |
+                    InteractiveFlag.pinchMove |
+                    InteractiveFlag.pinchZoom |
+                    InteractiveFlag.doubleTapZoom,
+              ),
               onMapReady: () {
                 _ready = true;
-                _fit();
+                _scheduleFit();
               },
             ),
             children: [
@@ -136,6 +165,7 @@ class _AnimatedFinderMapState extends State<AnimatedFinderMap> {
                 child: TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.findhelp.find_help',
+                  errorTileCallback: (tile, error, stackTrace) {},
                 ),
               ),
               MarkerLayer(
@@ -150,7 +180,7 @@ class _AnimatedFinderMapState extends State<AnimatedFinderMap> {
                     Marker(
                       point: LatLng(place.lat, place.lng),
                       width: 118,
-                      height: 54,
+                      height: 72,
                       alignment: Alignment.bottomCenter,
                       child: GestureDetector(
                         onTap: () => widget.onSelect?.call(place),
@@ -225,28 +255,33 @@ class _PinkPin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            gradient: AppColors.primaryGradient,
-            borderRadius: BorderRadius.circular(99),
-            border: Border.all(color: Colors.white, width: selected ? 2 : 1),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(99),
+              border: Border.all(color: Colors.white, width: selected ? 2 : 1),
+            ),
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
+            ),
           ),
-          child: Text(
-            label,
-            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
+          Icon(
+            Icons.location_on_rounded,
+            color: selected ? AppColors.primaryDark : AppColors.primary,
+            size: selected ? 26 : 22,
           ),
-        ),
-        Icon(
-          Icons.location_on_rounded,
-          color: selected ? AppColors.primaryDark : AppColors.primary,
-          size: selected ? 26 : 22,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

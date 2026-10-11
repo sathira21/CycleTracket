@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../theme.dart';
 import '../widgets.dart';
@@ -62,7 +61,7 @@ class HelpScreen extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Pressable(
-              onTap: () => launchUrl(Uri(scheme: 'tel', path: '1990')),
+              onTap: () => openTelephone(context, '1990'),
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(

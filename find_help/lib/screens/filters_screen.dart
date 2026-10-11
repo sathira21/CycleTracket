@@ -121,8 +121,20 @@ class _FiltersScreenState extends State<FiltersScreen> {
                         children: [
                           Row(
                             children: [
-                              const SectionLabel('Distance from you'),
-                              const Spacer(),
+                              const Expanded(
+                                child: Text(
+                                  'DISTANCE FROM YOU',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: AppColors.primaryDark,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1.1,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
                               Text(
                                 '${_radius.toStringAsFixed(0)} km',
                                 style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w800),
@@ -214,8 +226,24 @@ class _FiltersScreenState extends State<FiltersScreen> {
                           children: [
                             const Icon(Icons.place_rounded, color: AppColors.primary, size: 16),
                             const SizedBox(width: 8),
-                            Expanded(child: Text(place.name, style: const TextStyle(fontWeight: FontWeight.w700))),
-                            Text(place.area, style: const TextStyle(color: AppColors.muted, fontSize: 12)),
+                            Expanded(
+                              child: Text(
+                                place.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                place.area,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.end,
+                                style: const TextStyle(color: AppColors.muted, fontSize: 12),
+                              ),
+                            ),
                           ],
                         ),
                       ),

@@ -44,7 +44,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 400));
       expect(tester.takeException(), isNull, reason: '${screen.runtimeType} failed to open');
       await _goBack(tester);
-      expect(tester.takeException(), isNull);
+      expect(tester.takeException(), isNull, reason: '${screen.runtimeType} failed while closing');
     }
 
     final bar = tester.widget<NavigationBar>(find.byType(NavigationBar));
@@ -153,6 +153,11 @@ void main() {
     await _fill<SuppliesScreen>(tester, 0, 'CRUD Pads Edited');
     await _tapLabel<SuppliesScreen>(tester, 'Save changes');
     await tester.pump();
+    await tester.scrollUntilVisible(
+      find.text('CRUD Pads Edited'),
+      220,
+      scrollable: _pageList<SuppliesScreen>().first,
+    );
     expect(find.text('CRUD Pads Edited'), findsWidgets);
 
     final editedPads = find.ancestor(of: find.text('CRUD Pads Edited'), matching: find.byType(Column)).at(1);
@@ -248,9 +253,9 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     await tester.scrollUntilVisible(
-      find.text('Delete saved feedback').hitTestable(),
-      200,
-      scrollable: _verticalList().last,
+      find.text('Delete saved feedback'),
+      300,
+      scrollable: _pageList<FeedbackScreen>().first,
     );
     expect(find.text('Delete saved feedback'), findsWidgets);
     expect(tester.takeException(), isNull);
@@ -301,6 +306,15 @@ Future<void> _openHost(WidgetTester tester) async {
   await tester.tap(find.text('open-find-help'));
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 800));
+}
+
+Finder _pageList<T extends Widget>() {
+  return find.descendant(
+    of: find.byType(T),
+    matching: find.byWidgetPredicate(
+      (widget) => widget is Scrollable && widget.axisDirection == AxisDirection.down && widget.restorationId != 'editable',
+    ),
+  );
 }
 
 Finder _verticalList() {

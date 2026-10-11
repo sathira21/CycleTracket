@@ -388,9 +388,11 @@ class _Summary extends StatelessWidget {
                             children: [
                               Icon(Icons.verified_user_rounded, color: Color(0xCCFFFFFF), size: 14),
                               SizedBox(width: 4),
-                              Text(
-                                'Trusted locations, stored on this device',
-                                style: TextStyle(color: Color(0xCCFFFFFF), fontSize: 11),
+                              Expanded(
+                                child: Text(
+                                  'Trusted locations, stored on this device',
+                                  style: TextStyle(color: Color(0xCCFFFFFF), fontSize: 11, height: 1.25),
+                                ),
                               ),
                             ],
                           ),
@@ -409,16 +411,18 @@ class _Summary extends StatelessWidget {
                       color: AppColors.card,
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Find another location',
-                          style: TextStyle(color: Color(0xFF9F0D71), fontWeight: FontWeight.w800, fontSize: 13),
-                        ),
-                        SizedBox(width: 6),
-                        Icon(Icons.arrow_forward_rounded, color: Color(0xFF9F0D71), size: 16),
-                      ],
+                    child: const FittedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Find another location',
+                            style: TextStyle(color: Color(0xFF9F0D71), fontWeight: FontWeight.w800, fontSize: 13),
+                          ),
+                          SizedBox(width: 6),
+                          Icon(Icons.arrow_forward_rounded, color: Color(0xFF9F0D71), size: 16),
+                        ],
+                      ),
                     ),
                   ),
                 ),

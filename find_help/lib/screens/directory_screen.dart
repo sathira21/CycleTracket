@@ -189,17 +189,23 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                             ],
                             onChanged: (value) => setState(() => _kind = value ?? 'Pharmacy'),
                           ),
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: const Text('Open now'),
-                            value: _open,
-                            onChanged: (value) => setState(() => _open = value),
+                          Material(
+                            type: MaterialType.transparency,
+                            child: SwitchListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: const Text('Open now'),
+                              value: _open,
+                              onChanged: (value) => setState(() => _open = value),
+                            ),
                           ),
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: const Text('Free supplies'),
-                            value: _free,
-                            onChanged: (value) => setState(() => _free = value),
+                          Material(
+                            type: MaterialType.transparency,
+                            child: SwitchListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: const Text('Free supplies'),
+                              value: _free,
+                              onChanged: (value) => setState(() => _free = value),
+                            ),
                           ),
                           const SizedBox(height: 8),
                           GradientButton(
@@ -253,7 +259,10 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          Row(
+                          Wrap(
+                            spacing: 4,
+                            runSpacing: 0,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               TextButton.icon(
                                 onPressed: () => _edit(pharmacy),
@@ -268,7 +277,6 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                                 icon: const Icon(Icons.delete_outline_rounded, size: 16, color: Color(0xFFDC2626)),
                                 label: const Text('Delete', style: TextStyle(color: Color(0xFFDC2626))),
                               ),
-                              const Spacer(),
                               TextButton(
                                 onPressed: () => app.setSearch(pharmacy.area),
                                 child: const Text('Show nearby'),
