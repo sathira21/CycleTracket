@@ -54,7 +54,7 @@ class DashboardScreen extends StatelessWidget {
                                   TextButton(
                                     onPressed: () {
                                       Hive.box<dynamic>('settings').clear();
-                                      Hive.box('daily_logs_box').clear();
+                                      DailyLogStore.clearAll();
                                       // Navigate to onboarding screen
                                       Navigator.pushAndRemoveUntil(
                                         context, 
