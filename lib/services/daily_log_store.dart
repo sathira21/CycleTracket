@@ -24,7 +24,13 @@ class DailyLogStore {
   /// Rebuild UI when logs change.
   static ValueListenable<Box<DailyLog>> get listenable => _box.listenable();
 
+  /// Listenable alias for dashboard integration.
+  static ValueListenable<Box<DailyLog>> listenToLogs() => listenable;
+
   static int get count => _box.length;
+
+  /// All logs (alias for [all]).
+  static List<DailyLog> getAllLogs() => all();
 
   // ── CREATE / UPDATE ────────────────────────────────────────────────
 

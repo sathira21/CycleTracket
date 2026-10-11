@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/daily_log.dart';
 import '../services/daily_log_store.dart';
+import '../l10n/strings.dart';
+import '../l10n/lang.dart';
 
 class DailyLoggingScreen extends StatefulWidget {
   final DateTime? date;
@@ -50,14 +52,24 @@ class _DailyLoggingScreenState extends State<DailyLoggingScreen> {
     await DailyLogStore.saveLog(log);
 
     if (mounted) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Saved Offline ✅', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        )
-      );
+      if (_activeTab == 'Flow') {
+        setState(() {
+          _activeTab = 'Symptoms';
+        });
+      } else if (_activeTab == 'Symptoms') {
+        setState(() {
+          _activeTab = 'Mood';
+        });
+      } else {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(t('save_entry') + ' ✅', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          )
+        );
+      }
     }
   }
 
@@ -75,12 +87,17 @@ class _DailyLoggingScreenState extends State<DailyLoggingScreen> {
     }
   }
 
+  String _activeTab = 'Flow';
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Log for ${_logDate.day}/${_logDate.month}', style: const TextStyle(color: AppTheme.textDark)),
-        backgroundColor: Colors.transparent,
+    return ValueListenableBuilder<Lang>(
+      valueListenable: LangService.current,
+      builder: (context, lang, _) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Log for ${_logDate.day}/${_logDate.month}', style: const TextStyle(color: AppTheme.textDark)),
+            backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppTheme.textDark),
         actions: [
@@ -95,36 +112,21 @@ class _DailyLoggingScreenState extends State<DailyLoggingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('How are you feeling?', style: Theme.of(context).textTheme.displayLarge),
+            Text(t('how_feeling'), style: Theme.of(context).textTheme.displayLarge),
             const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildLogCategory('Flow', Icons.water_drop, _selectedSymptoms == 'Flow' || _selectedMood == 'Flow' ? false : true, () {}),
-                _buildLogCategory('Symptoms', Icons.favorite, false, () {}),
-                _buildLogCategory('Mood', Icons.mood, false, () {}),
+                _buildLogCategory(t('flow'), Icons.water_drop, _activeTab == 'Flow', () => setState(() => _activeTab = 'Flow')),
+                _buildLogCategory(t('symptoms'), Icons.favorite, _activeTab == 'Symptoms', () => setState(() => _activeTab = 'Symptoms')),
+                _buildLogCategory(t('mood'), Icons.mood, _activeTab == 'Mood', () => setState(() => _activeTab = 'Mood')),
               ],
             ),
             const SizedBox(height: 30),
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(border: Border.all(color: AppTheme.primaryColor.withOpacity(0.5)), borderRadius: BorderRadius.circular(20)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('FLOW INTENSITY', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildPill('Light'), 
-                      _buildPill('Medium'), 
-                      _buildPill('Heavy'), 
-                      _buildPill('Spot'),
-                    ],
-                  ),
-                ],
-              ),
+              child: _buildActiveTabContent(),
             ),
             const SizedBox(height: 20),
             TextField(
@@ -141,15 +143,78 @@ class _DailyLoggingScreenState extends State<DailyLoggingScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _saveLog,
-                child: const Text('Save Entry'),
+                child: Text(t('save_entry')),
               ),
             ),
             const SizedBox(height: 10),
-            const Center(child: Text('🔒 Your data stays private & on-device', style: TextStyle(color: AppTheme.textLight))),
+            Center(child: Text(t('data_private'), style: const TextStyle(color: AppTheme.textLight))),
           ],
         ),
       ),
     );
+      },
+    );
+  }
+
+  Widget _buildActiveTabContent() {
+    if (_activeTab == 'Flow') {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(t('flow_intensity'), style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
+          const SizedBox(height: 15),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _buildPill('Light', _selectedFlow, (val) => setState(() => _selectedFlow = val)), 
+              _buildPill('Medium', _selectedFlow, (val) => setState(() => _selectedFlow = val)), 
+              _buildPill('Heavy', _selectedFlow, (val) => setState(() => _selectedFlow = val)), 
+              _buildPill('Spotting', _selectedFlow, (val) => setState(() => _selectedFlow = val)),
+            ],
+          ),
+        ],
+      );
+    } else if (_activeTab == 'Symptoms') {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(t('symptoms_caps'), style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
+          const SizedBox(height: 15),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _buildPill('Cramps', _selectedSymptoms, (val) => setState(() => _selectedSymptoms = val)),
+              _buildPill('Bloating', _selectedSymptoms, (val) => setState(() => _selectedSymptoms = val)),
+              _buildPill('Headache', _selectedSymptoms, (val) => setState(() => _selectedSymptoms = val)),
+              _buildPill('Fatigue', _selectedSymptoms, (val) => setState(() => _selectedSymptoms = val)),
+              _buildPill('Tender', _selectedSymptoms, (val) => setState(() => _selectedSymptoms = val)),
+              _buildPill('Nausea', _selectedSymptoms, (val) => setState(() => _selectedSymptoms = val)),
+            ],
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(t('mood_today'), style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
+          const SizedBox(height: 15),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _buildPill('Calm', _selectedMood, (val) => setState(() => _selectedMood = val)),
+              _buildPill('Anxious', _selectedMood, (val) => setState(() => _selectedMood = val)),
+              _buildPill('Sad', _selectedMood, (val) => setState(() => _selectedMood = val)),
+              _buildPill('Irritable', _selectedMood, (val) => setState(() => _selectedMood = val)),
+              _buildPill('Tired', _selectedMood, (val) => setState(() => _selectedMood = val)),
+            ],
+          ),
+        ],
+      );
+    }
   }
 
   Widget _buildLogCategory(String title, IconData icon, bool isSelected, VoidCallback onTap) {
@@ -178,13 +243,12 @@ class _DailyLoggingScreenState extends State<DailyLoggingScreen> {
     );
   }
 
-  Widget _buildPill(String text) {
-    bool isSelected = _selectedFlow == text;
+  Widget _buildPill(String key, String currentValue, Function(String) onSelect) {
+    bool isSelected = currentValue == key;
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _selectedFlow = text;
-        });
+        // Toggle off if already selected, otherwise select
+        onSelect(isSelected ? '' : key);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -194,7 +258,7 @@ class _DailyLoggingScreenState extends State<DailyLoggingScreen> {
           border: Border.all(color: AppTheme.primaryColor.withOpacity(0.5)),
         ),
         child: Text(
-          text, 
+          t(key), 
           style: TextStyle(
             color: isSelected ? Colors.white : AppTheme.textDark,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,

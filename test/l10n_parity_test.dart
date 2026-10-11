@@ -25,7 +25,7 @@ void main() {
       // Sinhala strings should not be identical to English (they use a different
       // script), except for borrowed words or brand names.
       // We allow a few known exceptions.
-      if (!const {'greeting'}.contains(key)) {
+      if (!const {'greeting', 'app_title'}.contains(key)) {
         expect(si, isNot(en),
             reason: 'SI value for "$key" is identical to EN: "$en"');
       }
