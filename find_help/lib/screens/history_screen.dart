@@ -26,11 +26,19 @@ class HistoryScreen extends StatelessWidget {
                   const BackButtonRound(),
                   Expanded(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Visit history', style: Theme.of(context).textTheme.displayLarge),
-                        SizedBox(height: 2),
                         Text(
+                          'Visit history',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
                           'Every pharmacy you opened',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: AppColors.muted, fontSize: 11, fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -75,7 +83,14 @@ class HistoryScreen extends StatelessWidget {
                             children: [
                               LiveDot(size: 8),
                               SizedBox(width: 8),
-                              Text('Live location synced', style: TextStyle(fontWeight: FontWeight.w800)),
+                              Expanded(
+                                child: Text(
+                                  'Live location synced',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontWeight: FontWeight.w800),
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 6),
@@ -102,16 +117,20 @@ class HistoryScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      const Text(
-                        'ALL RECENT PHARMACIES',
-                        style: TextStyle(
-                          color: AppColors.muted,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
+                      const Expanded(
+                        child: Text(
+                          'ALL RECENT PHARMACIES',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: AppColors.muted,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
+                          ),
                         ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
                       Text('${items.length} items', style: const TextStyle(color: AppColors.muted, fontSize: 12)),
                     ],
                   ),
@@ -180,18 +199,24 @@ class _HistoryCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-            Text(visit.name, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+            Text(visit.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
             const SizedBox(height: 4),
             Text(
               'Visited ${visit.visitedOn} · $distance away${visit.note.isEmpty ? '' : ' · ${visit.note}'}',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(color: AppColors.muted, fontSize: 12),
             ),
             const SizedBox(height: 8),
             Row(
               children: [
-                StatusPill(label: visit.badge),
+                Flexible(child: StatusPill(label: visit.badge)),
                 const Spacer(),
                 TextButton(
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
                   onPressed: onDelete,
                   child: const Text('Remove', style: TextStyle(color: Color(0xFFDC2626))),
                 ),

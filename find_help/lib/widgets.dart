@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'theme.dart';
 
@@ -68,14 +70,21 @@ class RiseIn extends StatefulWidget {
 
 class _RiseInState extends State<RiseIn> {
   var _play = false;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     final delay = Duration(milliseconds: 36 * math.min(widget.index, 8));
-    Future<void>.delayed(delay, () {
+    _timer = Timer(delay, () {
       if (mounted) setState(() => _play = true);
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -399,6 +408,23 @@ void showAppSnack(BuildContext context, String message) {
     ..showSnackBar(SnackBar(content: Text(message)));
 }
 
+/// Opens a phone number. A missing dialer shows the number instead of an error.
+Future<void> openTelephone(BuildContext context, String number) {
+  final cleaned = number.replaceAll(RegExp(r'[^\d+]'), '');
+  final dial = cleaned.isEmpty ? '1990' : cleaned;
+  return openExternal(context, Uri.parse('tel:$dial'), 'Call $number');
+}
+
+/// Opens an external link. Failures stay in the app as a short message.
+Future<void> openExternal(BuildContext context, Uri uri, String fallback) async {
+  try {
+    final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!opened && context.mounted) showAppSnack(context, fallback);
+  } catch (_) {
+    if (context.mounted) showAppSnack(context, fallback);
+  }
+}
+
 class SegmentedControl extends StatelessWidget {
   const SegmentedControl({
     super.key,
@@ -522,13 +548,19 @@ class ChoiceGrid extends StatelessWidget {
                       ]
                     : null,
               ),
-              child: Text(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
                 option,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: option == selected ? Colors.white : AppColors.primaryDark,
                   fontWeight: FontWeight.w700,
                   fontSize: 13,
                 ),
+              ),
               ),
             ),
           ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../app_state.dart';
 import '../models.dart';
@@ -53,7 +52,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.blush,
       body: SafeArea(
-        child: ListView(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
           children: [
             Row(
@@ -171,6 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: 36,
               child: ListView(
+                key: const Key('home-chips'),
                 scrollDirection: Axis.horizontal,
                 children: [
                   _Chip(
@@ -327,34 +330,32 @@ class _HomeScreenState extends State<HomeScreen> {
               style: const TextStyle(color: AppColors.muted, fontSize: 12),
             ),
             const SizedBox(height: 10),
-            if (_map)
-              SizedBox(
-                height: 420,
-                child: AnimatedFinderMap(
-                  pins: results,
-                  onSelect: (place) => openPlace(context, place),
+            if (results.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: Text('No open places match. Turn off Open now or search a town.', textAlign: TextAlign.center),
+              )
+            else if (_map)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 8),
+                child: Text(
+                  'Drag the map, pinch to zoom, and tap a pin to open that place.',
+                  style: TextStyle(color: AppColors.muted, fontSize: 12),
                 ),
               )
-            else ...[
-              if (results.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
-                  child: Text('No open places match. Turn off Open now or search a town.', textAlign: TextAlign.center),
-                )
-              else
-                for (final band in distanceBands(results, app.originLat, app.originLng).where((band) => band.places.isNotEmpty)) ...[
-                  const SizedBox(height: 4),
-                  _BandHeader(band: band),
-                  const SizedBox(height: 8),
-                  for (var i = 0; i < band.places.length; i++) ...[
-                    RiseIn(index: i, child: _PharmacyCard(place: band.places[i])),
-                    const SizedBox(height: 12),
-                  ],
+            else
+              for (final band in distanceBands(results, app.originLat, app.originLng).where((band) => band.places.isNotEmpty)) ...[
+                const SizedBox(height: 4),
+                _BandHeader(band: band),
+                const SizedBox(height: 8),
+                for (var i = 0; i < band.places.length; i++) ...[
+                  RiseIn(index: i, child: _PharmacyCard(place: band.places[i])),
+                  const SizedBox(height: 12),
                 ],
-            ],
+              ],
             const SizedBox(height: 4),
             Pressable(
-              onTap: () => launchUrl(Uri(scheme: 'tel', path: '1990')),
+              onTap: () => openTelephone(context, '1990'),
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
@@ -381,6 +382,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ],
+              ),
+            ),
+            if (_map)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: SizedBox(
+                  height: 320,
+                  child: AnimatedFinderMap(
+                    pins: results,
+                    onSelect: (place) => openPlace(context, place),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -395,24 +410,27 @@ class _PharmacyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = AppScope.of(context);
-    return Pressable(
-      onTap: () => openPlace(context, place),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: const Color(0xFFF3E7EE)),
-          boxShadow: const [BoxShadow(color: Color(0x0FE21886), blurRadius: 16, offset: Offset(0, 6))],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: const Color(0xFFF3E7EE)),
+        boxShadow: const [BoxShadow(color: Color(0x0FE21886), blurRadius: 16, offset: Offset(0, 6))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Pressable(
+            onTap: () => openPlace(context, place),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
               child: PlacePhoto(place: place, height: 120),
             ),
             Padding(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -454,31 +472,35 @@ class _PharmacyCard extends StatelessWidget {
                     runSpacing: 6,
                     children: [for (final tag in place.tags.take(4)) ServiceTag(tag)],
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _ActionButton(
-                          label: 'Call',
-                          filled: false,
-                          onTap: () => launchUrl(Uri(scheme: 'tel', path: place.phone.replaceAll(' ', ''))),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _ActionButton(
-                          label: 'View details',
-                          filled: true,
-                          onTap: () => openPlace(context, place),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
-          ],
-        ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _ActionButton(
+                    label: 'Call',
+                    filled: false,
+                    onTap: () => openTelephone(context, place.phone),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _ActionButton(
+                    label: 'View details',
+                    filled: true,
+                    onTap: () => openPlace(context, place),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -609,12 +631,18 @@ class _ModeButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: selected ? AppColors.primary : Colors.transparent),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? AppColors.primary : AppColors.muted,
-            fontWeight: FontWeight.w700,
-            fontSize: 12,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: selected ? AppColors.primary : AppColors.muted,
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+            ),
           ),
         ),
       ),
@@ -644,7 +672,7 @@ class _InfoCard extends StatelessWidget {
     return Pressable(
       onTap: onTap,
       child: Container(
-        height: 132,
+        constraints: const BoxConstraints(minHeight: 132),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppColors.card,
@@ -653,8 +681,9 @@ class _InfoCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(eyebrow, style: const TextStyle(color: AppColors.primary, fontSize: 10, fontWeight: FontWeight.w800)),
+            Text(eyebrow, style: const TextStyle(color: AppColors.primary, fontSize: 10, fontWeight: FontWeight.w800, height: 1.1)),
             const SizedBox(height: 6),
             Row(
               children: [
@@ -667,13 +696,18 @@ class _InfoCard extends StatelessWidget {
                   const SizedBox(width: 8),
                 ],
                 Expanded(
-                  child: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800)),
+                  child: Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, height: 1.15),
+                  ),
                 ),
               ],
             ),
-            const Spacer(),
-            Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12)),
-            Text(detail, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.muted, fontSize: 11)),
+            const SizedBox(height: 8),
+            Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, height: 1.15)),
+            Text(detail, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.muted, fontSize: 11, height: 1.15)),
           ],
         ),
       ),
@@ -701,7 +735,7 @@ class _ListLink extends StatelessWidget {
     return Pressable(
       onTap: onTap,
       child: Container(
-        height: 96,
+        constraints: const BoxConstraints(minHeight: 96),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppColors.card,
@@ -710,6 +744,7 @@ class _ListLink extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               children: [
@@ -723,11 +758,11 @@ class _ListLink extends StatelessWidget {
                   child: Icon(icon, color: AppColors.primary, size: 18),
                 ),
                 const Spacer(),
-                Text(count, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w800)),
+                Text(count, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w800, fontSize: 14, height: 1.1)),
               ],
             ),
-            const Spacer(),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+            const SizedBox(height: 8),
+            Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, height: 1.1)),
             Text(
               detail,
               maxLines: 1,

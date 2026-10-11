@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../app_state.dart';
 import '../models.dart';
@@ -17,15 +16,6 @@ class DetailsScreen extends StatelessWidget {
   const DetailsScreen({super.key, required this.place});
 
   final Place place;
-
-  Future<void> _open(BuildContext context, Uri uri, String fallback) async {
-    try {
-      final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
-      if (!opened && context.mounted) showAppSnack(context, fallback);
-    } catch (_) {
-      if (context.mounted) showAppSnack(context, fallback);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -271,17 +261,22 @@ class DetailsScreen extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Expanded(
+                                    flex: 5,
                                     child: Row(
                                       children: [
-                                        Text(
-                                          weekdayName(row.day),
-                                          style: TextStyle(
-                                            color: row.closed
-                                                ? const Color(0xFFF87171)
-                                                : row.day == today
-                                                    ? AppColors.primary
-                                                    : const Color(0xFF5C4A55),
-                                            fontWeight: row.day == today ? FontWeight.w800 : FontWeight.w500,
+                                        Flexible(
+                                          child: Text(
+                                            weekdayName(row.day),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: row.closed
+                                                  ? const Color(0xFFF87171)
+                                                  : row.day == today
+                                                      ? AppColors.primary
+                                                      : const Color(0xFF5C4A55),
+                                              fontWeight: row.day == today ? FontWeight.w800 : FontWeight.w500,
+                                            ),
                                           ),
                                         ),
                                         if (row.day == today) ...[
@@ -305,11 +300,18 @@ class DetailsScreen extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  Text(
-                                    row.hours,
-                                    style: TextStyle(
-                                      color: row.closed ? const Color(0xFFF87171) : AppColors.ink,
-                                      fontWeight: FontWeight.w600,
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    flex: 4,
+                                    child: Text(
+                                      row.hours,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.end,
+                                      style: TextStyle(
+                                        color: row.closed ? const Color(0xFFF87171) : AppColors.ink,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -331,16 +333,12 @@ class DetailsScreen extends StatelessWidget {
                           GradientButton(
                             label: 'Call',
                             icon: Icons.call_rounded,
-                            onPressed: () => _open(
-                              context,
-                              Uri(scheme: 'tel', path: place.phone.replaceAll(' ', '')),
-                              place.phone,
-                            ),
+                            onPressed: () => openTelephone(context, place.phone),
                           ),
                           const SizedBox(height: 8),
                           Pressable(
                             haptic: true,
-                            onTap: () => _open(
+                            onTap: () => openExternal(
                               context,
                               Uri.parse(
                                 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent('${place.name} ${place.address}')}',
