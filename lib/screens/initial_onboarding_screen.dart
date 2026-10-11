@@ -64,20 +64,23 @@ class InitialOnboardingScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     padding: const EdgeInsets.all(4),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _LangButton(
-                          text: 'English',
-                          isSelected: !isSinhala,
-                          onTap: () => LangService.setPreview(Lang.en),
-                        ),
-                        _LangButton(
-                          text: 'සිංහල',
-                          isSelected: isSinhala,
-                          onTap: () => LangService.setPreview(Lang.si),
-                        ),
-                      ],
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _LangButton(
+                            text: 'English',
+                            isSelected: !isSinhala,
+                            onTap: () => LangService.setPreview(Lang.en),
+                          ),
+                          _LangButton(
+                            text: 'සිංහල',
+                            isSelected: isSinhala,
+                            onTap: () => LangService.setPreview(Lang.si),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -152,7 +155,7 @@ class _LangButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryDark : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
